@@ -1,0 +1,160 @@
+/* ── KPI Metrics ─────────────────────────── */
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border-color);
+  border: 1px solid var(--border-color);
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1200px) {
+  .metricsGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .metricsGrid { grid-template-columns: 1fr; }
+}
+
+.kpiCard {
+  background: var(--bg-surface);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: background-color 0.2s;
+}
+
+.kpiCard:hover {
+  background: #FAFBFA;
+}
+
+.kpiHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.kpiTitle {
+  font-family: var(--font-family-utility);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.kpiIcon {
+  display: none;
+}
+
+.kpiValue {
+  font-family: var(--font-family-display);
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.kpiFooter {
+  font-size: 0.72rem;
+  color: var(--text-light);
+  font-family: var(--font-family-utility);
+}
+
+/* ── Charts ─────────────────────────── */
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1024px) {
+  .chartsGrid { grid-template-columns: 1fr; }
+}
+
+.chartCard {
+  background: #fff;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.chartTitle {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.chartContainer {
+  height: 260px;
+  width: 100%;
+}
+
+/* ── Recent Activity ─────────────────────────── */
+
+.recentGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .recentGrid { grid-template-columns: 1fr; }
+}
+
+.recentCard {
+  background: #fff;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  padding: 20px;
+}
+
+.recentTitle {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.listItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--bg-canvas);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  transition: background 0.15s;
+}
+
+.listItem:hover {
+  background: var(--border-light);
+}
+
+.listName {
+  font-weight: 600;
+}
+
+.listMeta {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}

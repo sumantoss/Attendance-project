@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,400&display=swap');
+
+:root {
+  --font-family-utility: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-family-display: 'Merriweather', Georgia, serif;
+
+  /* Primary Palette */
+  --color-forest-black: #1A211C;
+  --color-canvas: #F4F5F2;
+  --color-agri-green: #28593D;
+  --color-chartreuse: #D4E05B;
+  --color-rust: #C84C31;
+
+  /* Semantic Overrides mapped to new palette */
+  --color-primary: var(--color-agri-green);
+  --color-primary-hover: #1E462F;
+  --color-primary-light: #E6EBE8;
+
+  --color-secondary: var(--color-chartreuse);
+  --color-secondary-light: #F4F7D6;
+
+  --color-success: var(--color-agri-green);
+  --color-success-light: var(--color-primary-light);
+  --color-warning: var(--color-chartreuse);
+  --color-warning-light: var(--color-secondary-light);
+  --color-danger: var(--color-rust);
+  --color-danger-light: #F5E2DF;
+  --color-info: #315C85;
+  --color-info-light: #E0E8F0;
+
+  /* Backgrounds */
+  --bg-canvas: var(--color-canvas);
+  --bg-surface: #FFFFFF;
+  --bg-sidebar: var(--color-forest-black);
+
+  /* Text */
+  --text-primary: var(--color-forest-black);
+  --text-secondary: #424E46;
+  --text-muted: #6B7A70;
+  --text-light: #9CA8A0;
+
+  /* Borders - Hairlines */
+  --border-color: #D1D5CE;
+  --border-light: #E5E8E2;
+
+  /* Layout */
+  --sidebar-width: 260px;
+  --sidebar-width-collapsed: 72px;
+  --header-height: 64px;
+
+  /* Brutalist Effects (No soft shadows, sharp corners) */
+  --shadow-xs: none;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family-utility);
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font-family: var(--font-family);
+  cursor: pointer;
+  border: none;
+  background: none;
+  outline: none;
+}
+
+input, select, textarea {
+  font-family: var(--font-family);
+  outline: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
