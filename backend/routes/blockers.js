@@ -11,7 +11,7 @@ const AuditLog = require('../models/AuditLog');
 router.get('/', auth, async (req, res) => {
   try {
     const blockers = await Blocker.find()
-      .populate('task')
+      .populate({ path: 'task', populate: { path: 'project' } })
       .populate('employee')
       .populate('assignedReviewer')
       .sort({ createdAt: -1 });

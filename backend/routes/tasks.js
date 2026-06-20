@@ -33,7 +33,7 @@ router.post('/', auth, async (req, res) => {
       description,
       priority: priority || 'Medium',
       deadline,
-      status: status || 'Pending'
+      status: status || 'Not Started'
     });
 
     await AuditLog.create({

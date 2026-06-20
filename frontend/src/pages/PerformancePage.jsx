@@ -30,7 +30,7 @@ function PerformancePage() {
   // Filter metrics by department
   const filteredMetrics = metrics.filter(m => {
     if (!selectedDept) return true;
-    return m.employee?.department === selectedDept;
+    return m.employee?.department?.toString() === selectedDept;
   });
 
   // Prepare chart data (Top 5 scorers)

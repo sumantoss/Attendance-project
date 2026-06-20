@@ -288,6 +288,7 @@ function AttendancePage() {
     resetPin();
     setAssignedTasks([]);
     setSelectedTasksData({});
+    setShowCheckoutModal(false);
   };
 
   return (

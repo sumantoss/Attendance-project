@@ -17,7 +17,7 @@ function TasksPage() {
     description: '',
     priority: 'Medium',
     deadline: '',
-    status: 'Pending'
+    status: 'Not Started'
   });
   const [error, setError] = useState('');
 
@@ -79,7 +79,7 @@ function TasksPage() {
       description: '',
       priority: 'Medium',
       deadline: new Date(Date.now() + 3*24*60*60*1000).toISOString().split('T')[0],
-      status: 'Pending'
+      status: 'Not Started'
     });
     setError('');
     setShowModal(true);
@@ -126,6 +126,7 @@ function TasksPage() {
       case 'Completed': return styles.badgeSuccess;
       case 'In Progress': return styles.badgeWarning;
       case 'Blocked': return styles.badgeDanger;
+      case 'Not Started': return styles.badgeMuted;
       default: return styles.badgeMuted;
     }
   };
@@ -296,7 +297,7 @@ function TasksPage() {
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
               >
-                <option value="Pending">Pending</option>
+                <option value="Not Started">Not Started</option>
                 <option value="In Progress">In Progress</option>
                 <option value="Blocked">Blocked</option>
                 <option value="Completed">Completed</option>

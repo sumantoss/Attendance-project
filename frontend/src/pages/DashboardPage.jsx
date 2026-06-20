@@ -57,8 +57,9 @@ function DashboardPage() {
         .then(res => setCharts(res.data))
         .catch(err => console.error(err));
 
-      // Fetch recent daily updates
-      api.get('/work-updates')
+      // Fetch today's recent daily updates
+      const todayStr = new Date().toISOString().split('T')[0];
+      api.get(`/work-updates?date=${todayStr}`)
         .then(res => setRecentUpdates(res.data.slice(0, 5)))
         .catch(err => console.error(err));
 
@@ -268,27 +269,25 @@ function DashboardPage() {
         </div>
       )}
 
+      {/* Precision Clock Banner */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', background: 'var(--color-forest-black)', color: 'var(--color-canvas)', borderRadius: '12px', padding: '16px 24px', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--color-chartreuse)', boxShadow: '0 0 8px var(--color-chartreuse)', flexShrink: 0 }}></div>
+          <span style={{ fontFamily: 'var(--font-family-utility)', fontSize: '0.68rem', fontWeight: 700, color: 'var(--color-chartreuse)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            Shift Active
+          </span>
+        </div>
+        <span style={{ fontFamily: 'var(--font-family-display)', fontSize: '2rem', fontWeight: 300, color: 'var(--color-canvas)', lineHeight: 1 }}>
+          {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </span>
+        <span style={{ fontSize: '0.85rem', color: '#9CA8A0' }}>
+          {currentTime.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}
+        </span>
+      </div>
+
       {/* KPI Metrics */}
       <div className={styles.metricsGrid}>
-        {/* Signature Element: Precision Clock */}
-        <div className={styles.kpiCard} style={{ gridColumn: 'span 1', background: 'var(--color-forest-black)', color: 'var(--color-canvas)', cursor: 'default' }}>
-          <div className={styles.kpiHeader}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--color-chartreuse)', boxShadow: '0 0 8px var(--color-chartreuse)' }}></div>
-              <span style={{ fontFamily: 'var(--font-family-utility)', fontSize: '0.68rem', fontWeight: 700, color: 'var(--color-chartreuse)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                Shift Active
-              </span>
-            </div>
-            <span style={{ fontFamily: 'var(--font-family-display)', fontSize: '2.5rem', fontWeight: 300, color: 'var(--color-canvas)', lineHeight: 1 }}>
-              {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </span>
-            <span className={styles.kpiFooter} style={{ color: '#9CA8A0' }}>
-              {currentTime.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}
-            </span>
-          </div>
-        </div>
-
-        {kpis.slice(1).map((kpi, idx) => (
+        {kpis.map((kpi, idx) => (
           <div key={idx} className={styles.kpiCard} onClick={() => handleKpiClick(kpi.key, kpi.title)} style={{ cursor: 'pointer' }}>
             <div className={styles.kpiHeader}>
               <span className={styles.kpiTitle}>{kpi.title}</span>

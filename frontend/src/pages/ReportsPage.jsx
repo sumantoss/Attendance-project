@@ -240,7 +240,7 @@ function ReportsPage() {
                 ) : (
                   attendanceData.map(att => (
                     <tr key={att._id} className={styles.tr}>
-                      <td className={styles.td} style={{ fontWeight: '600' }}>{att.date}</td>
+                      <td className={styles.td} style={{ fontWeight: '600' }}>{new Date(att.date + 'T00:00:00').toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}</td>
                       <td className={styles.td}>{att.employee?.name}</td>
                       <td className={styles.td}>{new Date(att.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
                       <td className={styles.td}>
@@ -304,7 +304,7 @@ function ReportsPage() {
                 onChange={(e) => setTaskFilter({ ...taskFilter, status: e.target.value })}
               >
                 <option value="">All Statuses</option>
-                <option value="Pending">Pending</option>
+                <option value="Not Started">Not Started</option>
                 <option value="In Progress">In Progress</option>
                 <option value="Blocked">Blocked</option>
                 <option value="Completed">Completed</option>

@@ -120,7 +120,7 @@ function EmployeesPage() {
           <tbody>
             {employees.length === 0 ? (
               <tr>
-                <td colSpan="8" className={styles.td} style={{ textAlign: 'center' }}>
+                <td colSpan="7" className={styles.td} style={{ textAlign: 'center' }}>
                   No employees found.
                 </td>
               </tr>
