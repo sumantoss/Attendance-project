@@ -145,7 +145,7 @@ function ReportsPage() {
   return (
     <div className={styles.card}>
       {/* Report Type tabs */}
-      <div style={{ display: 'flex', borderBottom: '2px solid var(--border-color)', gap: '15px', marginBottom: '20px' }}>
+      <div className={styles.tabs}>
         {[
           { id: 'attendance', label: 'Attendance Logs' },
           { id: 'employee', label: 'Employee Reports' },
@@ -156,15 +156,7 @@ function ReportsPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            style={{
-              padding: '12px 20px',
-              fontWeight: '600',
-              fontSize: '0.9rem',
-              color: activeTab === tab.id ? 'var(--color-primary)' : 'var(--text-muted)',
-              borderBottom: activeTab === tab.id ? '3px solid var(--color-primary)' : '3px solid transparent',
-              cursor: 'pointer',
-              marginBottom: '-2px'
-            }}
+            className={`${styles.tab} ${activeTab === tab.id ? styles.tabActive : ''}`}
           >
             {tab.label}
           </button>

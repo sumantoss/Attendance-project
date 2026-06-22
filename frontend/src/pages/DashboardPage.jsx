@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react';
 import { 
   FaUsers, FaUserCheck, FaUserTimes, FaClock, 
-  FaFolder, FaEdit, FaExclamationTriangle, FaListAlt, FaTimes
+  FaFolder, FaEdit, FaExclamationTriangle, FaListAlt, FaTimes, FaArrowRight
 } from 'react-icons/fa';
 import {
-  ResponsiveContainer, LineChart, Line, BarChart, Bar,
+  ResponsiveContainer, LineChart, Line, AreaChart, Area, BarChart, Bar,
   PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend
 } from 'recharts';
 import api from '../services/api';
 import styles from '../styles/DashboardPage.module.css';
 import { io } from 'socket.io-client';
 
-const COLORS = ['#0F5132', '#FFC107', '#0D6EFD', '#DC3545'];
+const COLORS = ['#28593D', '#D4E05B', '#315C85', '#C84C31'];
 
 function DashboardPage() {
   const [summary, setSummary] = useState({
@@ -33,7 +33,6 @@ function DashboardPage() {
 
   const [recentUpdates, setRecentUpdates] = useState([]);
   const [blockers, setBlockers] = useState([]);
-  const [escalations, setEscalations] = useState([]);
   const [performance, setPerformance] = useState([]);
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -47,33 +46,23 @@ function DashboardPage() {
 
   useEffect(() => {
     const loadAllData = () => {
-      // Fetch summary
       api.get('/dashboard/summary')
         .then(res => setSummary(res.data))
         .catch(err => console.error(err));
 
-      // Fetch charts
       api.get('/dashboard/charts')
         .then(res => setCharts(res.data))
         .catch(err => console.error(err));
 
-      // Fetch today's recent daily updates
       const todayStr = new Date().toISOString().split('T')[0];
       api.get(`/work-updates?date=${todayStr}`)
         .then(res => setRecentUpdates(res.data.slice(0, 5)))
         .catch(err => console.error(err));
 
-      // Fetch blockers
       api.get('/blockers')
         .then(res => setBlockers(res.data.filter(b => b.status === 'Open' || b.status === 'In Review').slice(0, 5)))
         .catch(err => console.error(err));
 
-      // Fetch escalations
-      api.get('/escalations')
-        .then(res => setEscalations(res.data.filter(e => e.status === 'Open').slice(0, 5)))
-        .catch(err => console.error(err));
-
-      // Fetch performance metrics
       api.get('/reports/performance')
         .then(res => setPerformance(res.data))
         .catch(err => console.error(err));
@@ -95,12 +84,11 @@ function DashboardPage() {
     };
   }, []);
 
-  // Compute top performers and needs attention lists
   const sortedPerformance = [...performance].sort((a, b) => b.taskCompletionRate - a.taskCompletionRate);
   const topPerformers = sortedPerformance.filter(p => p.taskCompletionRate >= 80).slice(0, 3);
   const needsAttention = sortedPerformance.filter(p => p.taskCompletionRate < 50 || p.overdueTasks > 1).slice(0, 3);
 
-  // Handle KPI card click — fetch detail data and open modal
+  // Handle KPI card click
   const handleKpiClick = async (kpiKey, kpiTitle) => {
     setKpiModal({ open: true, title: kpiTitle, data: [], columns: [], loading: true });
     const todayStr = new Date().toISOString().split('T')[0];
@@ -235,93 +223,118 @@ function DashboardPage() {
   };
 
   const kpis = [
-    { key: 'totalEmployees', title: 'Total Employees', value: summary.totalEmployees, icon: <FaUsers />, color: '#0F5132', bg: '#E8F5E9' },
-    { key: 'presentToday', title: 'Present Today', value: summary.presentToday, icon: <FaUserCheck />, color: '#2E7D32', bg: '#E8F5E9' },
-    { key: 'absentToday', title: 'Absent Today', value: summary.absentToday, icon: <FaUserTimes />, color: '#DC3545', bg: '#FEE2E2' },
-    { key: 'lateToday', title: 'Late Arrivals', value: summary.lateToday, icon: <FaClock />, color: '#D97706', bg: '#FEF3C7' },
-    { key: 'activeProjects', title: 'Active Projects', value: summary.activeProjects, icon: <FaFolder />, color: '#0D6EFD', bg: '#DBEAFE' },
-    { key: 'pendingTasks', title: 'Pending Tasks', value: summary.pendingTasks, icon: <FaListAlt />, color: '#0F5132', bg: '#E8F5E9' },
-    { key: 'openBlockers', title: 'Open Blockers', value: summary.openBlockers, icon: <FaExclamationTriangle />, color: '#DC3545', bg: '#FEE2E2' },
-    { key: 'pendingEOD', title: 'Pending EOD', value: summary.pendingDailyUpdates, icon: <FaEdit />, color: '#D97706', bg: '#FEF3C7' },
+    { key: 'totalEmployees', title: 'Total Employees', value: summary.totalEmployees, icon: <FaUsers />, color: '#28593D', bg: '#E6EBE8' },
+    { key: 'presentToday', title: 'Present Today', value: summary.presentToday, icon: <FaUserCheck />, color: '#28593D', bg: '#E6EBE8' },
+    { key: 'absentToday', title: 'Absent Today', value: summary.absentToday, icon: <FaUserTimes />, color: '#C84C31', bg: '#F5E2DF' },
+    { key: 'lateToday', title: 'Late Arrivals', value: summary.lateToday, icon: <FaClock />, color: '#92400E', bg: '#FEF3C7' },
+    { key: 'activeProjects', title: 'Active Projects', value: summary.activeProjects, icon: <FaFolder />, color: '#315C85', bg: '#E0E8F0' },
+    { key: 'pendingTasks', title: 'Pending Tasks', value: summary.pendingTasks, icon: <FaListAlt />, color: '#315C85', bg: '#E0E8F0' },
+    { key: 'openBlockers', title: 'Open Blockers', value: summary.openBlockers, icon: <FaExclamationTriangle />, color: '#C84C31', bg: '#F5E2DF' },
+    { key: 'pendingEOD', title: 'Pending EOD', value: summary.pendingDailyUpdates, icon: <FaEdit />, color: '#92400E', bg: '#FEF3C7' },
   ];
+
+  const getStatusBadgeClass = (status) => {
+    if (['Active', 'On Time', 'Completed'].includes(status)) return styles.badgeSuccess;
+    if (['Late', 'Absent', 'Open', 'High', 'Critical', 'Blocked', 'Early Leave'].includes(status)) return styles.badgeDanger;
+    if (['In Progress', 'Still In', 'Pending Checkout', 'Medium'].includes(status)) return styles.badgeWarning;
+    return styles.badgeInfo;
+  };
 
   return (
     <div>
       {/* Alert Banner */}
       {(summary.lateToday > 0 || summary.openBlockers > 0) && (
-        <div style={{ 
-          background: '#FEF2F2', 
-          border: '1px solid #FECACA',
-          padding: '12px 18px', 
-          borderRadius: '10px', 
-          marginBottom: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px',
-          fontSize: '0.84rem',
-          color: '#991B1B',
-          fontWeight: '500'
-        }}>
-          <FaExclamationTriangle style={{ color: '#DC3545', fontSize: '1rem', flexShrink: 0 }} />
+        <div className={styles.alertBanner}>
+          <FaExclamationTriangle style={{ fontSize: '1rem', flexShrink: 0 }} />
           <span>
             <strong>Action Required:</strong> {summary.lateToday} late arrival(s) and {summary.openBlockers} open blocker(s) need review.
           </span>
         </div>
       )}
 
-      {/* Precision Clock Banner */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', background: 'var(--color-forest-black)', color: 'var(--color-canvas)', borderRadius: '12px', padding: '16px 24px', marginBottom: '16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--color-chartreuse)', boxShadow: '0 0 8px var(--color-chartreuse)', flexShrink: 0 }}></div>
-          <span style={{ fontFamily: 'var(--font-family-utility)', fontSize: '0.68rem', fontWeight: 700, color: 'var(--color-chartreuse)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-            Shift Active
-          </span>
+      {/* Shift Clock Banner */}
+      <div className={styles.shiftBanner}>
+        <div className={styles.shiftDotWrap}>
+          <div className={styles.pulseDot}></div>
+          <span className={styles.shiftLabel}>Shift Active</span>
         </div>
-        <span style={{ fontFamily: 'var(--font-family-display)', fontSize: '2rem', fontWeight: 300, color: 'var(--color-canvas)', lineHeight: 1 }}>
-          {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        <span className={styles.shiftTime}>
+          {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
         </span>
-        <span style={{ fontSize: '0.85rem', color: '#9CA8A0' }}>
-          {currentTime.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}
+        <span className={styles.shiftDate}>
+          {currentTime.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
         </span>
       </div>
 
       {/* KPI Metrics */}
       <div className={styles.metricsGrid}>
         {kpis.map((kpi, idx) => (
-          <div key={idx} className={styles.kpiCard} onClick={() => handleKpiClick(kpi.key, kpi.title)} style={{ cursor: 'pointer' }}>
+          <div 
+            key={idx} 
+            className={styles.kpiCard} 
+            onClick={() => handleKpiClick(kpi.key, kpi.title)} 
+            style={{ '--kpi-accent': kpi.color, '--kpi-bg': kpi.bg, cursor: 'pointer' }}
+          >
             <div className={styles.kpiHeader}>
-              <span className={styles.kpiTitle}>{kpi.title}</span>
-              <span className={styles.kpiValue}>{kpi.value}</span>
-              <span className={styles.kpiFooter}>Click to view details</span>
+              <div className={styles.kpiTitleGroup}>
+                <span className={styles.kpiTitle}>{kpi.title}</span>
+              </div>
+              <div className={styles.kpiIconWrapper}>
+                {kpi.icon}
+              </div>
             </div>
+            <span className={styles.kpiValue}>{kpi.value}</span>
+            <span className={styles.kpiFooter}>
+              View details <FaArrowRight style={{ fontSize: '0.55rem' }} />
+            </span>
           </div>
         ))}
       </div>
 
-
       {/* Charts Row */}
       <div className={styles.chartsGrid}>
-        {/* Attendance Trends (7 Days) */}
+        {/* Attendance Trends */}
         <div className={styles.chartCard}>
           <h2 className={styles.chartTitle}>7-Day Attendance Trend</h2>
           <div className={styles.chartContainer}>
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={charts.attendanceTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
-                <XAxis dataKey="day" stroke="#9CA3AF" fontSize={12} />
-                <YAxis stroke="#9CA3AF" fontSize={12} allowDecimals={false} />
-                <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid #E5E7EB', fontSize: '0.82rem' }} />
-                <Legend />
-                <Line type="monotone" dataKey="Present" stroke="#0F5132" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
-                <Line type="monotone" dataKey="Late" stroke="#D97706" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
-              </LineChart>
+              <AreaChart data={charts.attendanceTrend}>
+                <defs>
+                  <linearGradient id="gradPresent" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#28593D" stopOpacity={0.15}/>
+                    <stop offset="95%" stopColor="#28593D" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="gradLate" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#C84C31" stopOpacity={0.1}/>
+                    <stop offset="95%" stopColor="#C84C31" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-light)" vertical={false} opacity={0.5} />
+                <XAxis dataKey="day" stroke="#9CA8A0" fontSize={11} tickLine={false} axisLine={{ stroke: 'var(--border-light)' }} />
+                <YAxis stroke="#9CA8A0" fontSize={11} allowDecimals={false} tickLine={false} axisLine={{ stroke: 'var(--border-light)' }} />
+                <Tooltip 
+                  contentStyle={{ 
+                    background: 'rgba(255, 255, 255, 0.95)', 
+                    border: 'none', 
+                    borderRadius: '12px', 
+                    fontSize: '0.85rem',
+                    fontWeight: 500,
+                    boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                    backdropFilter: 'blur(10px)'
+                  }} 
+                  itemStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
+                />
+                <Legend iconType="square" wrapperStyle={{ paddingTop: '12px', fontSize: '0.8rem' }} />
+                <Area type="monotone" dataKey="Present" stroke="#28593D" strokeWidth={2} fill="url(#gradPresent)" dot={{ r: 3, fill: '#28593D', stroke: '#fff', strokeWidth: 2 }} activeDot={{ r: 5 }} />
+                <Area type="monotone" dataKey="Late" stroke="#C84C31" strokeWidth={2} fill="url(#gradLate)" dot={{ r: 3, fill: '#C84C31', stroke: '#fff', strokeWidth: 2 }} activeDot={{ r: 5 }} />
+              </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Task Completion Rate (Pie Chart) */}
+        {/* Task Distribution Pie */}
         <div className={styles.chartCard}>
-          <h2 className={styles.chartTitle}>Task Distributions</h2>
+          <h2 className={styles.chartTitle}>Task Distribution</h2>
           <div className={styles.chartContainer}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -329,86 +342,88 @@ function DashboardPage() {
                   data={charts.taskData.filter(d => d.value > 0)}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
+                  innerRadius={55}
                   outerRadius={80}
-                  paddingAngle={5}
+                  paddingAngle={3}
                   dataKey="value"
+                  stroke="#fff"
+                  strokeWidth={2}
                 >
                   {charts.taskData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid #E5E7EB', fontSize: '0.82rem' }} />
-                <Legend verticalAlign="bottom" height={36} />
+                <Tooltip 
+                  contentStyle={{ 
+                    background: 'rgba(255, 255, 255, 0.95)', 
+                    border: 'none', 
+                    borderRadius: '12px', 
+                    fontSize: '0.85rem',
+                    fontWeight: 500,
+                    boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                    backdropFilter: 'blur(10px)'
+                  }}
+                  itemStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
+                />
+                <Legend verticalAlign="bottom" height={36} iconType="square" wrapperStyle={{ fontSize: '0.78rem' }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
         </div>
       </div>
 
-      {/* Department Headcounts Row */}
+      {/* Department Headcounts */}
       <div className={styles.chartsGrid} style={{ gridTemplateColumns: '1fr' }}>
-        {/* Department Headcounts */}
         <div className={styles.chartCard}>
           <h2 className={styles.chartTitle}>Department Headcounts</h2>
           <div className={styles.chartContainer}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={charts.departmentData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
-                <XAxis type="number" stroke="#9CA3AF" fontSize={12} allowDecimals={false} />
-                <YAxis type="category" dataKey="name" stroke="#9CA3AF" fontSize={11} width={80} />
-                <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid #E5E7EB', fontSize: '0.82rem' }} />
-                <Bar dataKey="value" fill="#0F5132" radius={[0, 4, 4, 0]} name="Headcount" />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-light)" horizontal={false} opacity={0.5} />
+                <XAxis type="number" stroke="#9CA8A0" fontSize={11} allowDecimals={false} tickLine={false} axisLine={{ stroke: 'var(--border-light)' }} />
+                <YAxis type="category" dataKey="name" stroke="#6B7A70" fontSize={11} width={100} tickLine={false} axisLine={{ stroke: 'var(--border-light)' }} fontWeight={600} />
+                <Tooltip 
+                  contentStyle={{ 
+                    background: 'rgba(255, 255, 255, 0.95)', 
+                    border: 'none', 
+                    borderRadius: '12px', 
+                    fontSize: '0.85rem',
+                    fontWeight: 500,
+                    boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                    backdropFilter: 'blur(10px)'
+                  }}
+                  itemStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
+                />
+                <Bar dataKey="value" fill="#28593D" name="Headcount" barSize={24} radius={[0, 6, 6, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
       </div>
 
-      {/* Blockers & Escalations Panel */}
-      <div className={styles.recentGrid} style={{ marginBottom: '30px' }}>
+      {/* Blockers */}
+      <div className={styles.recentGrid} style={{ gridTemplateColumns: '1fr' }}>
         <div className={styles.recentCard}>
-          <h2 className={styles.recentTitle}>Open Blockers ({blockers.length})</h2>
+          <h2 className={styles.recentTitle}>
+            Open Blockers
+            <span className={styles.count} style={{ background: blockers.length > 0 ? '#F5E2DF' : '#E6EBE8', color: blockers.length > 0 ? '#C84C31' : '#28593D' }}>
+              {blockers.length}
+            </span>
+          </h2>
           <div className={styles.list}>
             {blockers.length === 0 ? (
-              <div style={{ padding: '16px', textAlign: 'center', color: '#9CA3AF', fontSize: '0.84rem' }}>No open blockers logged.</div>
+              <div className={styles.emptyState}>No open blockers logged.</div>
             ) : (
               blockers.map(b => (
-                <div key={b._id} className={styles.listItem} style={{ display: 'block', padding: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontWeight: '600' }}>{b.task?.title}</span>
-                    <span style={{ color: '#DC3545', fontWeight: '600', fontSize: '0.72rem', background: '#FDE8EA', padding: '2px 8px', borderRadius: '9999px' }}>{b.priority}</span>
+                <div key={b._id} className={styles.listItem}>
+                  <div className={styles.listItemHeader}>
+                    <span className={styles.listItemTitle}>{b.task?.title || 'Standalone Blocker'}</span>
+                    <span className={`${styles.badge} ${b.priority === 'Critical' || b.priority === 'High' ? styles.badgeDanger : styles.badgeWarning}`}>{b.priority}</span>
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    Type: <strong>{b.type}</strong> | Raised by: <strong>{b.employee?.name}</strong>
+                  <div className={styles.listItemMeta}>
+                    {b.type} · Raised by <strong>{b.employee?.name}</strong>
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                    "{b.description}"
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-
-        <div className={styles.recentCard}>
-          <h2 className={styles.recentTitle}>Active Escalations ({escalations.length})</h2>
-          <div className={styles.list}>
-            {escalations.length === 0 ? (
-              <div style={{ padding: '16px', textAlign: 'center', color: '#9CA3AF', fontSize: '0.84rem' }}>No active escalations.</div>
-            ) : (
-              escalations.map(e => (
-                <div key={e._id} className={styles.listItem} style={{ display: 'block', padding: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontWeight: '600' }}>{e.task?.title}</span>
-                    <span style={{ color: '#DC3545', fontWeight: '600', fontSize: '0.72rem', background: '#FDE8EA', padding: '2px 8px', borderRadius: '9999px' }}>{e.priority}</span>
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    Escalated by: <strong>{e.employee?.name}</strong> | Escalated to: <strong>{e.escalatedTo?.name || 'Admin'}</strong>
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                    Reason: "{e.reason}"
-                  </div>
+                  <div className={styles.listItemDesc}>{b.description}</div>
                 </div>
               ))
             )}
@@ -416,34 +431,34 @@ function DashboardPage() {
         </div>
       </div>
 
-      {/* Performance Snapshots & Recent EOD updates */}
+      {/* Performance & EOD Updates */}
       <div className={styles.recentGrid}>
         {/* Performance Snapshot */}
         <div className={styles.recentCard}>
-          <h2 className={styles.recentTitle}>Employee Performance Snapshot</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-            <div>
-              <h4 style={{ color: 'var(--color-success)', fontSize: '0.8rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '6px', marginBottom: '10px' }}>Top Performers</h4>
+          <h2 className={styles.recentTitle}>Performance Snapshot</h2>
+          <div className={styles.perfGrid}>
+            <div className={styles.perfSection}>
+              <span className={styles.perfLabel} style={{ color: '#28593D' }}>Top Performers</span>
               {topPerformers.length === 0 ? (
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>No data available.</div>
+                <div className={styles.emptyState}>No data available.</div>
               ) : (
                 topPerformers.map(p => (
-                  <div key={p._id} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', fontSize: '0.8rem' }}>
-                    <span>{p.name}</span>
-                    <strong style={{ color: 'var(--color-success)' }}>{p.taskCompletionRate}% Rate</strong>
+                  <div key={p._id} className={styles.perfItem}>
+                    <span className={styles.perfName}>{p.name}</span>
+                    <span className={styles.perfValue} style={{ background: '#E6EBE8', color: '#28593D' }}>{p.taskCompletionRate}%</span>
                   </div>
                 ))
               )}
             </div>
-            <div>
-              <h4 style={{ color: 'var(--color-danger)', fontSize: '0.8rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '6px', marginBottom: '10px' }}>Needs Attention</h4>
+            <div className={styles.perfSection}>
+              <span className={styles.perfLabel} style={{ color: '#C84C31' }}>Needs Attention</span>
               {needsAttention.length === 0 ? (
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>No data available.</div>
+                <div className={styles.emptyState}>No data available.</div>
               ) : (
                 needsAttention.map(p => (
-                  <div key={p._id} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', fontSize: '0.8rem' }}>
-                    <span>{p.name}</span>
-                    <strong style={{ color: 'var(--color-danger)' }}>{p.overdueTasks} Overdue</strong>
+                  <div key={p._id} className={styles.perfItem}>
+                    <span className={styles.perfName}>{p.name}</span>
+                    <span className={styles.perfValue} style={{ background: '#F5E2DF', color: '#C84C31' }}>{p.overdueTasks} overdue</span>
                   </div>
                 ))
               )}
@@ -451,22 +466,27 @@ function DashboardPage() {
           </div>
         </div>
 
-        {/* EOD Work Updates */}
+        {/* EOD Updates */}
         <div className={styles.recentCard}>
-          <h2 className={styles.recentTitle}>Recent EOD Daily Updates</h2>
+          <h2 className={styles.recentTitle}>
+            Today's EOD Updates
+            <span className={styles.count} style={{ background: '#E6EBE8', color: '#28593D' }}>
+              {recentUpdates.length}
+            </span>
+          </h2>
           <div className={styles.list}>
             {recentUpdates.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                No recent daily updates submitted today.
-              </div>
+              <div className={styles.emptyState}>No daily updates submitted today.</div>
             ) : (
               recentUpdates.map(up => (
-                <div key={up._id} className={styles.listItem} style={{ display: 'block', padding: '10px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '4px' }}>
-                    <span style={{ fontWeight: '600' }}>{up.employee?.name}</span>
-                    <span style={{ color: 'var(--text-muted)' }}>{up.totalHoursWorked} hrs worked</span>
+                <div key={up._id} className={styles.listItem}>
+                  <div className={styles.listItemHeader}>
+                    <span className={styles.listItemTitle}>{up.employee?.name}</span>
+                    <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#6B7A70' }}>
+                      {up.totalHoursWorked} hrs
+                    </span>
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', whiteSpace: 'pre-line' }}>
+                  <div className={styles.listItemDesc} style={{ fontStyle: 'normal' }}>
                     {up.eodReport}
                   </div>
                 </div>
@@ -480,30 +500,32 @@ function DashboardPage() {
       {kpiModal.open && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.45)',
+          background: 'rgba(26, 33, 28, 0.5)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           zIndex: 1000, padding: '20px'
         }} onClick={() => setKpiModal({ ...kpiModal, open: false })}>
           <div style={{
-            background: '#fff', borderRadius: '14px', width: '100%', maxWidth: '720px',
+            background: '#fff', width: '100%', maxWidth: '720px',
             maxHeight: '80vh', display: 'flex', flexDirection: 'column',
-            boxShadow: '0 24px 48px rgba(0,0,0,0.15)', animation: 'scaleIn 0.2s ease'
+            border: '1px solid var(--border-color)',
+            animation: 'scaleIn 0.2s ease'
           }} onClick={(e) => e.stopPropagation()}>
             {/* Modal Header */}
             <div style={{
-              padding: '18px 24px', borderBottom: '1px solid #E5E7EB',
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+              padding: '18px 24px', borderBottom: '1px solid #D1D5CE',
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              background: '#F4F5F2'
             }}>
               <div>
-                <h2 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#111827', margin: 0 }}>{kpiModal.title}</h2>
-                <span style={{ fontSize: '0.75rem', color: '#9CA3AF' }}>
+                <h2 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#1A211C', margin: 0 }}>{kpiModal.title}</h2>
+                <span style={{ fontSize: '0.75rem', color: '#6B7A70' }}>
                   {kpiModal.loading ? 'Loading...' : `${kpiModal.data.length} result(s)`}
                 </span>
               </div>
               <button onClick={() => setKpiModal({ ...kpiModal, open: false })} style={{
-                width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #E5E7EB',
+                width: '32px', height: '32px', border: '1px solid #D1D5CE',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer', background: '#F9FAFB', color: '#6B7280', fontSize: '0.9rem'
+                cursor: 'pointer', background: '#fff', color: '#6B7A70', fontSize: '0.9rem'
               }}>
                 <FaTimes />
               </button>
@@ -512,11 +534,11 @@ function DashboardPage() {
             {/* Modal Body */}
             <div style={{ padding: '0', overflowY: 'auto', flex: 1 }}>
               {kpiModal.loading ? (
-                <div style={{ padding: '40px', textAlign: 'center', color: '#9CA3AF', fontSize: '0.88rem' }}>
+                <div style={{ padding: '40px', textAlign: 'center', color: '#9CA8A0', fontSize: '0.88rem' }}>
                   Loading details...
                 </div>
               ) : kpiModal.data.length === 0 ? (
-                <div style={{ padding: '40px', textAlign: 'center', color: '#9CA3AF', fontSize: '0.88rem' }}>
+                <div style={{ padding: '40px', textAlign: 'center', color: '#9CA8A0', fontSize: '0.88rem' }}>
                   No records found.
                 </div>
               ) : (
@@ -525,10 +547,10 @@ function DashboardPage() {
                     <tr>
                       {kpiModal.columns.map((col, i) => (
                         <th key={i} style={{
-                          padding: '10px 16px', textAlign: 'left', background: '#F9FAFB',
-                          color: '#6B7280', fontWeight: 600, fontSize: '0.72rem',
-                          textTransform: 'uppercase', letterSpacing: '0.04em',
-                          borderBottom: '1px solid #E5E7EB', position: 'sticky', top: 0
+                          padding: '10px 16px', textAlign: 'left', background: '#F4F5F2',
+                          color: '#6B7A70', fontWeight: 700, fontSize: '0.72rem',
+                          textTransform: 'uppercase', letterSpacing: '0.06em',
+                          borderBottom: '2px solid #D1D5CE', position: 'sticky', top: 0
                         }}>{col}</th>
                       ))}
                     </tr>
@@ -537,23 +559,14 @@ function DashboardPage() {
                     {kpiModal.data.map((row, i) => {
                       const vals = Object.values(row);
                       return (
-                        <tr key={i} style={{ borderBottom: '1px solid #F3F4F6' }}>
+                        <tr key={i} style={{ borderBottom: '1px solid #E5E8E2' }}>
                           {vals.map((v, j) => (
                             <td key={j} style={{
-                              padding: '11px 16px', color: j === 0 ? '#111827' : '#4B5563',
+                              padding: '11px 16px', color: j === 0 ? '#1A211C' : '#424E46',
                               fontWeight: j === 0 ? 600 : 400
                             }}>
-                              {/* Status column gets a badge */}
                               {j === vals.length - 1 ? (
-                                <span style={{
-                                  padding: '3px 10px', borderRadius: '9999px', fontSize: '0.72rem', fontWeight: 600,
-                                  background: v === 'Active' || v === 'On Time' ? '#F0FDF4' :
-                                             v === 'Late' || v === 'Early Leave' || v === 'Absent' || v === 'Open' || v === 'High' || v === 'Critical' ? '#FEF2F2' :
-                                             v === 'In Progress' || v === 'Still In' || v === 'Pending Checkout' ? '#FFFBEB' : '#F3F4F6',
-                                  color: v === 'Active' || v === 'On Time' ? '#166534' :
-                                         v === 'Late' || v === 'Early Leave' || v === 'Absent' || v === 'Open' || v === 'High' || v === 'Critical' ? '#991B1B' :
-                                         v === 'In Progress' || v === 'Still In' || v === 'Pending Checkout' ? '#92400E' : '#4B5563'
-                                }}>{v}</span>
+                                <span className={`${styles.badge} ${getStatusBadgeClass(v)}`}>{v}</span>
                               ) : v}
                             </td>
                           ))}

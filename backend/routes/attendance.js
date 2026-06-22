@@ -108,9 +108,9 @@ router.post('/check-in', async (req, res) => {
       return res.status(400).json({ message: 'Already checked in for today' });
     }
 
-    // Determine status (Late if after 10:00 AM)
+    // Determine status (Late if after 10:15 AM)
     const checkInLimit = new Date(now);
-    checkInLimit.setHours(10, 0, 0, 0);
+    checkInLimit.setHours(10, 15, 0, 0);
     const status = now > checkInLimit ? 'Late' : 'Present';
 
     attendance = await Attendance.create({
@@ -173,8 +173,9 @@ router.post('/check-out', async (req, res) => {
     // Compute total hours worked from individual task logs
     const totalHoursTracked = workedTasks.reduce((sum, t) => sum + parseFloat(t.hoursWorked || 0), 0);
 
+    // Determine early leave (Early Leave if before 6:10 PM)
     const checkOutLimit = new Date(now);
-    checkOutLimit.setHours(18, 30, 0, 0);
+    checkOutLimit.setHours(18, 10, 0, 0);
     
     if (now < checkOutLimit && attendance.status === 'Present') {
       attendance.status = 'Early Leave';

@@ -5,20 +5,11 @@ import styles from '../styles/AdminCommon.module.css';
 
 function BlockersPage() {
   const [blockers, setBlockers] = useState([]);
-  const [employees, setEmployees] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedBlocker, setSelectedBlocker] = useState(null);
-  const [escalationReason, setEscalationReason] = useState('');
-  const [escalateTo, setEscalateTo] = useState('');
-  const [escalationPriority, setEscalationPriority] = useState('High');
+
   useEffect(() => {
     api.get('/blockers')
       .then(res => setBlockers(res.data))
       .catch(err => console.error('Failed to fetch blockers', err));
-
-    api.get('/employees')
-      .then(res => setEmployees(res.data.filter(e => e.status === 'Active')))
-      .catch(err => console.error(err));
   }, []);
 
   const handleUpdateStatus = async (id, newStatus) => {
@@ -27,38 +18,6 @@ function BlockersPage() {
       api.get('/blockers').then(res => setBlockers(res.data));
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to update blocker status');
-    }
-  };
-
-  const handleOpenEscalation = (blocker) => {
-    setSelectedBlocker(blocker);
-    setEscalateTo(employees.length > 0 ? employees[0]._id : '');
-    setEscalationReason('');
-    setEscalationPriority('High');
-    setShowModal(true);
-  };
-
-  const handleEscalationSubmit = async (e) => {
-    e.preventDefault();
-    if (!escalationReason.trim() || !escalateTo) {
-      alert('Please fill in all required fields');
-      return;
-    }
-
-    try {
-      await api.post('/escalations', {
-        task: selectedBlocker.task?._id,
-        blocker: selectedBlocker._id,
-        employee: selectedBlocker.employee?._id,
-        reason: escalationReason,
-        escalatedTo: escalateTo,
-        priority: escalationPriority
-      });
-      setShowModal(false);
-      api.get('/blockers').then(res => setBlockers(res.data));
-      alert('Blocker successfully escalated!');
-    } catch (err) {
-      alert(err.response?.data?.message || 'Failed to escalate blocker');
     }
   };
 
@@ -85,7 +44,7 @@ function BlockersPage() {
       <div className={styles.header}>
         <h2 className={styles.title}>Project Blockers Directory</h2>
         <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-          Review and resolve employee-raised blockages or escalate them to Management.
+          Review and resolve employee-raised blockages.
         </span>
       </div>
 
@@ -157,13 +116,6 @@ function BlockersPage() {
                               <FaSync /> In Review
                             </button>
                           )}
-                          <button
-                            className={`${styles.btn}`}
-                            style={{ padding: '6px 12px', fontSize: '0.75rem', backgroundColor: '#fee2e2', color: '#991b1b', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                            onClick={() => handleOpenEscalation(b)}
-                          >
-                            <FaExclamationTriangle /> Escalate
-                          </button>
                         </>
                       )}
                       {(b.status === 'Resolved' || b.status === 'Closed') && (
@@ -177,67 +129,6 @@ function BlockersPage() {
           </tbody>
         </table>
       </div>
-
-      {showModal && selectedBlocker && (
-        <div className={styles.modalOverlay}>
-          <form className={styles.modalContent} style={{ maxWidth: '500px' }} onSubmit={handleEscalationSubmit}>
-            <h3 className={styles.title} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#dc2626' }}>
-              <FaExclamationTriangle /> Escalate Unresolved Blocker
-            </h3>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '15px' }}>
-              You are escalating the block on: <strong>{selectedBlocker.task?.title || 'Standalone Blocker'}</strong>
-            </p>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>Escalate To (Management/Admin) *</label>
-              <select
-                className={styles.select}
-                value={escalateTo}
-                onChange={(e) => setEscalateTo(e.target.value)}
-                required
-              >
-                {employees.map(emp => (
-                  <option key={emp._id} value={emp._id}>{emp.name} ({emp.role})</option>
-                ))}
-              </select>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>Reason for Escalation *</label>
-              <textarea
-                placeholder="Explain why this blocker requires management intervention..."
-                className={styles.textarea}
-                value={escalationReason}
-                onChange={(e) => setEscalationReason(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>Escalation Priority Level</label>
-              <select
-                className={styles.select}
-                value={escalationPriority}
-                onChange={(e) => setEscalationPriority(e.target.value)}
-              >
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-                <option value="Critical">Critical</option>
-              </select>
-            </div>
-
-            <div className={styles.actions} style={{ marginTop: '15px' }}>
-              <button type="button" className={`${styles.btn} ${styles.btnSecondary}`} onClick={() => setShowModal(false)}>
-                Cancel
-              </button>
-              <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`} style={{ backgroundColor: '#dc2626' }}>
-                Submit Escalation
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
     </div>
   );
 }

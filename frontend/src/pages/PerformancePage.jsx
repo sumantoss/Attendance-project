@@ -33,10 +33,9 @@ function PerformancePage() {
     return m.employee?.department?.toString() === selectedDept;
   });
 
-  // Prepare chart data (Top 5 scorers)
+  // Prepare chart data (All employees)
   const chartData = [...filteredMetrics]
     .sort((a, b) => b.individualScore - a.individualScore)
-    .slice(0, 5)
     .map(m => ({
       name: m.employee?.name || 'Unknown',
       Score: m.individualScore,
@@ -80,15 +79,27 @@ function PerformancePage() {
       {/* Top Scorers Chart */}
       {chartData.length > 0 && (
         <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
-          <h3 style={{ fontSize: '0.9rem', marginBottom: '15px', color: 'var(--text-primary)' }}>Top Performers Comparison</h3>
+          <h3 style={{ fontSize: '0.9rem', marginBottom: '15px', color: 'var(--text-primary)' }}>Workforce Performance Comparison</h3>
           <div style={{ height: '240px' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis dataKey="name" fontSize={11} stroke="#64748b" />
-                <YAxis fontSize={11} stroke="#64748b" domain={[0, 100]} />
-                <Tooltip />
-                <Legend />
+              <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 45 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-light)" vertical={false} opacity={0.5} />
+                <XAxis dataKey="name" fontSize={11} stroke="#64748b" tickLine={false} axisLine={{ stroke: 'var(--border-light)' }} angle={-45} textAnchor="end" />
+                <YAxis fontSize={11} stroke="#64748b" domain={[0, 100]} tickLine={false} axisLine={{ stroke: 'var(--border-light)' }} />
+                <Tooltip 
+                  contentStyle={{ 
+                    background: 'rgba(255, 255, 255, 0.95)', 
+                    border: 'none', 
+                    borderRadius: '12px', 
+                    fontSize: '0.85rem',
+                    fontWeight: 500,
+                    boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                    backdropFilter: 'blur(10px)'
+                  }}
+                  itemStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
+                  cursor={{ fill: 'var(--border-light)', opacity: 0.2 }}
+                />
+                <Legend wrapperStyle={{ paddingTop: '10px' }} />
                 <Bar dataKey="Score" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="Completion" fill="var(--color-success)" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="Attendance" fill="var(--color-warning)" radius={[4, 4, 0, 0]} />

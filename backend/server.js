@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const http = require('http');
+const path = require('path');
 const { Server } = require('socket.io');
 
 dotenv.config();
@@ -28,6 +29,7 @@ io.on('connection', (socket) => {
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Register API Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -39,7 +41,6 @@ app.use('/api/projects', require('./routes/projects'));
 app.use('/api/tasks', require('./routes/tasks'));
 app.use('/api/work-updates', require('./routes/workUpdates'));
 app.use('/api/blockers', require('./routes/blockers'));
-app.use('/api/escalations', require('./routes/escalations'));
 app.use('/api/performance', require('./routes/performance'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/reports', require('./routes/reports'));

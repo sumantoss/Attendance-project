@@ -95,11 +95,13 @@ router.put('/:id', auth, async (req, res) => {
       }
 
       // Create Notification for the employee that raised the blocker
-      await Notification.create({
-        type: 'Blocker Resolved',
-        employee: blocker.employee._id,
-        message: `Blocker on ${blocker.task ? 'task "' + blocker.task.title + '"' : 'a standalone blocker'} has been marked as ${status}.`
-      });
+      if (blocker.employee) {
+        await Notification.create({
+          type: 'Blocker Resolved',
+          employee: blocker.employee._id,
+          message: `Blocker on ${blocker.task ? 'task "' + blocker.task.title + '"' : 'a standalone blocker'} has been marked as ${status}.`
+        });
+      }
     } else if (blocker.task) {
       const taskObj = await Task.findById(blocker.task._id);
       if (taskObj && taskObj.status !== 'Blocked') {

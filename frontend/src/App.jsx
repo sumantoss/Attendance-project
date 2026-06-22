@@ -11,8 +11,8 @@ import ReportsPage from './pages/ReportsPage';
 import SettingsPage from './pages/SettingsPage';
 import AuditLogsPage from './pages/AuditLogsPage';
 import BlockersPage from './pages/BlockersPage';
-import EscalationsPage from './pages/EscalationsPage';
 import PerformancePage from './pages/PerformancePage';
+import EmployeeProfilePage from './pages/EmployeeProfilePage';
 
 function App() {
   return (
@@ -29,11 +29,11 @@ function App() {
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="employees" element={<EmployeesPage />} />
+          <Route path="employees/:id" element={<EmployeeProfilePage />} />
           <Route path="departments" element={<DepartmentsPage />} />
           <Route path="projects" element={<ProjectsPage />} />
           <Route path="tasks" element={<TasksPage />} />
           <Route path="blockers" element={<BlockersPage />} />
-          <Route path="escalations" element={<EscalationsPage />} />
           <Route path="performance" element={<PerformancePage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="settings" element={<SettingsPage />} />

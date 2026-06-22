@@ -489,15 +489,16 @@ function AttendancePage() {
                     >
                       <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontWeight: '600', fontSize: '1rem', color: 'var(--text-primary)' }}>
                         <input 
-                          type="checkbox" 
+                          type="radio" 
+                          name="checkoutTask"
                           style={{ marginRight: '10px', width: '18px', height: '18px' }}
                           checked={!!taskData.checked}
                           onChange={(e) => {
                             setSelectedTasksData(prev => {
-                              const updated = {
-                                ...prev,
-                                [task._id]: { ...prev[task._id], checked: e.target.checked }
-                              };
+                              const updated = { ...prev };
+                              Object.keys(updated).forEach(id => {
+                                updated[id] = { ...updated[id], checked: id === task._id };
+                              });
                               return recalculateHours(updated);
                             });
                           }}

@@ -96,7 +96,6 @@ function AdminLayout() {
     { path: '/admin/projects', label: 'Projects', icon: <FaFolderOpen /> },
     { path: '/admin/tasks', label: 'Tasks', icon: <FaCheckSquare /> },
     { path: '/admin/blockers', label: 'Blockers', icon: <FaExclamationTriangle /> },
-    { path: '/admin/escalations', label: 'Escalations', icon: <FaListAlt /> },
     { path: '/admin/performance', label: 'Performance', icon: <FaChartLine /> },
     { path: '/admin/reports', label: 'Reports', icon: <FaFileAlt /> },
     { path: '/admin/settings', label: 'Settings', icon: <FaCog /> },

@@ -10,7 +10,8 @@ const employeeSchema = new mongoose.Schema({
   joiningDate: { type: Date, required: true },
   reportingManager: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee' },
   pin: { type: String, required: true }, // 4-digit verification PIN
-  status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' }
+  status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' },
+  photo: { type: String } // Path to employee profile photo
 }, { timestamps: true });
 
 module.exports = mongoose.model('Employee', employeeSchema);
