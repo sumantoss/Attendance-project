@@ -57,20 +57,20 @@ function getTenure(joiningDate) {
 
 const statusBadge = (status) => {
   const map = {
-    Present:      { bg: '#D1FAE5', color: '#065F46' },
-    Late:         { bg: '#FEF3C7', color: '#92400E' },
-    'Early Leave':{ bg: '#FED7AA', color: '#9A3412' },
-    Absent:       { bg: '#FEE2E2', color: '#991B1B' },
-    Active:       { bg: '#D1FAE5', color: '#065F46' },
-    Inactive:     { bg: '#FEE2E2', color: '#991B1B' },
-    'Not Started':{ bg: 'var(--border-light)', color: 'var(--text-secondary)' },
-    'In Progress':{ bg: '#DBEAFE', color: '#1E40AF' },
-    Blocked:      { bg: '#FEE2E2', color: '#991B1B' },
-    Completed:    { bg: '#D1FAE5', color: '#065F46' },
-    Open:         { bg: '#FEF3C7', color: '#92400E' },
-    'In Review':  { bg: '#DBEAFE', color: '#1E40AF' },
-    Resolved:     { bg: '#D1FAE5', color: '#065F46' },
-    Closed:       { bg: 'var(--border-light)', color: 'var(--text-secondary)' },
+    Present:      { bg: 'var(--color-neutral)', color: 'var(--color-primary)' },
+    Late:         { bg: 'var(--color-warning)', color: '#fff' },
+    'Early Leave':{ bg: 'var(--color-warning)', color: '#fff' },
+    Absent:       { bg: 'var(--color-danger-light)', color: 'var(--color-danger)' },
+    Active:       { bg: 'var(--color-neutral)', color: 'var(--color-primary)' },
+    Inactive:     { bg: 'var(--color-danger-light)', color: 'var(--color-danger)' },
+    'Not Started':{ bg: 'var(--bg-canvas)', color: 'var(--text-secondary)' },
+    'In Progress':{ bg: 'var(--bg-canvas)', color: 'var(--text-primary)' },
+    Blocked:      { bg: 'var(--color-danger-light)', color: 'var(--color-danger)' },
+    Completed:    { bg: 'var(--color-neutral)', color: 'var(--color-primary)' },
+    Open:         { bg: 'var(--bg-canvas)', color: 'var(--text-secondary)' },
+    'In Review':  { bg: 'var(--bg-canvas)', color: 'var(--text-primary)' },
+    Resolved:     { bg: 'var(--color-neutral)', color: 'var(--color-primary)' },
+    Closed:       { bg: 'var(--bg-canvas)', color: 'var(--text-secondary)' },
   };
   const s = map[status] || { bg: 'var(--border-light)', color: 'var(--text-secondary)' };
   return { className: styles.badge, style: { backgroundColor: s.bg, color: s.color } };
@@ -78,10 +78,10 @@ const statusBadge = (status) => {
 
 const priorityBadge = (priority) => {
   const map = {
-    Low:      { bg: 'var(--border-light)', color: 'var(--text-secondary)' },
-    Medium:   { bg: '#DBEAFE', color: '#1E40AF' },
-    High:     { bg: '#FEF3C7', color: '#92400E' },
-    Critical: { bg: '#FEE2E2', color: '#991B1B' },
+    Low:      { bg: 'var(--bg-canvas)', color: 'var(--text-secondary)' },
+    Medium:   { bg: 'var(--bg-canvas)', color: 'var(--text-primary)' },
+    High:     { bg: 'var(--color-warning)', color: '#fff' },
+    Critical: { bg: 'var(--color-danger-light)', color: 'var(--color-danger)' },
   };
   const s = map[priority] || map.Medium;
   return { className: styles.badge, style: { backgroundColor: s.bg, color: s.color } };
@@ -307,28 +307,28 @@ function EmployeeProfilePage() {
          ════════════════════════════════════ */}
       <div className={styles.statsRow}>
         <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ backgroundColor: '#EEF2FF', color: 'var(--color-primary)' }}><FaCalendarAlt /></div>
+          <div className={styles.statIcon} style={{ backgroundColor: 'var(--bg-canvas)', color: 'var(--color-primary)' }}><FaCalendarAlt /></div>
           <div>
             <div className={styles.statValue}>{attnSummary.attendanceRate}%</div>
             <div className={styles.statLabel}>Attendance Rate</div>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ backgroundColor: '#ECFDF5', color: '#10B981' }}><FaClock /></div>
+          <div className={styles.statIcon} style={{ backgroundColor: 'var(--color-neutral)', color: 'var(--color-primary)' }}><FaClock /></div>
           <div>
             <div className={styles.statValue}>{attnSummary.avgHours}h</div>
             <div className={styles.statLabel}>Avg. Working Hours</div>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ backgroundColor: '#DBEAFE', color: '#3B82F6' }}><FaTasks /></div>
+          <div className={styles.statIcon} style={{ backgroundColor: 'var(--bg-canvas)', color: 'var(--color-secondary)' }}><FaTasks /></div>
           <div>
             <div className={styles.statValue}>{taskSummary.completed}/{taskSummary.total}</div>
             <div className={styles.statLabel}>Tasks Completed</div>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ backgroundColor: '#FEF3C7', color: '#F59E0B' }}><FaTrophy /></div>
+          <div className={styles.statIcon} style={{ backgroundColor: 'var(--bg-canvas)', color: 'var(--color-warning)' }}><FaTrophy /></div>
           <div>
             <div className={styles.statValue}>{performance?.individualScore ?? '—'}</div>
             <div className={styles.statLabel}>Performance Score</div>
@@ -483,11 +483,11 @@ function EmployeeProfilePage() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', flex: 1, minWidth: '160px' }}>
               {[
                 { label: 'Total Tasks', value: taskSummary.total, color: 'var(--text-primary)' },
-                { label: 'Completed', value: taskSummary.completed, color: '#10B981' },
-                { label: 'In Progress', value: taskSummary.inProgress, color: '#3B82F6' },
-                { label: 'Blocked', value: taskSummary.blocked, color: '#EF4444' },
-                { label: 'Overdue', value: taskSummary.overdue, color: '#F59E0B' },
-                { label: 'Late Arrivals', value: attnSummary.totalLate, color: '#F59E0B' },
+                { label: 'Completed', value: taskSummary.completed, color: 'var(--color-primary)' },
+                { label: 'In Progress', value: taskSummary.inProgress, color: 'var(--text-primary)' },
+                { label: 'Blocked', value: taskSummary.blocked, color: 'var(--color-danger)' },
+                { label: 'Overdue', value: taskSummary.overdue, color: 'var(--color-warning)' },
+                { label: 'Late Arrivals', value: attnSummary.totalLate, color: 'var(--color-warning)' },
               ].map((item, i) => (
                 <div key={i}>
                   <div style={{ fontSize: '1.25rem', fontWeight: '700', color: item.color }}>{item.value}</div>
@@ -560,9 +560,9 @@ function EmployeeProfilePage() {
                     <td className={styles.td}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <div className={styles.progressOuter}>
-                          <div className={styles.progressInner} style={{ width: `${Math.min(100, 
+                          <div className={styles.progressInner} style={{ width: `${Math.min(100,
                             t.progressPercent)}%`, backgroundColor: t.progressPercent >= 100 ? '#10B981' : t.progressPercent >= 50 ? '#3B82F6' : '#F59E0B'
-                           || 'var(--color-primary)' }} />
+                           }} />
                         </div>
                         <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t.progressPercent}%</span>
                       </div>
@@ -573,7 +573,7 @@ function EmployeeProfilePage() {
                     <td className={styles.td} style={{ fontSize: '0.8rem' }}>
                       {t.deadline ? formatDate(t.deadline) : '—'}
                       {t.status !== 'Completed' && t.deadline && new Date(t.deadline) < new Date() && (
-                        <span style={{ color: '#EF4444', marginLeft: '4px', fontSize: '0.7rem', fontWeight: '600' }}>OVERDUE</span>
+                        <span style={{ color: 'var(--color-danger)', marginLeft: '4px', fontSize: '0.7rem', fontWeight: '600' }}>OVERDUE</span>
                       )}
                     </td>
                     <td className={styles.td}><span {...statusBadge(t.status)}>{t.status}</span></td>
@@ -599,7 +599,7 @@ function EmployeeProfilePage() {
             <div className={styles.timeline}>
               {recentUpdates.map(u => (
                 <div key={u._id} className={styles.timelineItem}>
-                  <div className={styles.timelineDot} style={{ backgroundColor: '#6366F1' || 'var(--color-primary)' }} />
+                  <div className={styles.timelineDot} style={{ backgroundColor: '#6366F1' }} />
                   <div className={styles.timelineDate}>{formatDate(u.date)}</div>
                   <div className={styles.timelineContent}>
                     <div className={styles.timelineTitle}>
@@ -639,7 +639,7 @@ function EmployeeProfilePage() {
           {sortedBlockers.length === 0 ? (
             <div className={styles.empty}>No active blockers.</div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px' }}>
               {sortedBlockers.map(item => (
                 <div key={item._id} className={styles.blockerCard}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
@@ -673,13 +673,13 @@ function EmployeeProfilePage() {
               Score: {performance.individualScore}/100
             </span>
           </div>
-          <div className={styles.sectionBody} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
+          <div className={styles.sectionBody} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
             <div className={styles.infoGrid}>
               <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>Attendance %</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div className={styles.progressOuter} style={{ flex: 1 }}>
-                    <div className={styles.progressInner} style={{ width: `${Math.min(100, performance.attendancePercentage)}%`, backgroundColor: '#10B981' || 'var(--color-primary)' }} />
+                    <div className={styles.progressInner} style={{ width: `${Math.min(100, performance.attendancePercentage)}%`, backgroundColor: '#10B981' }} />
                   </div>
                   <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>{performance.attendancePercentage}%</span>
                 </div>
@@ -696,7 +696,7 @@ function EmployeeProfilePage() {
                 <span className={styles.infoLabel}>Task Completion Rate</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div className={styles.progressOuter} style={{ flex: 1 }}>
-                    <div className={styles.progressInner} style={{ width: `${Math.min(100, performance.taskCompletionRate)}%`, backgroundColor: '#3B82F6' || 'var(--color-primary)' }} />
+                    <div className={styles.progressInner} style={{ width: `${Math.min(100, performance.taskCompletionRate)}%`, backgroundColor: '#3B82F6' }} />
                   </div>
                   <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>{performance.taskCompletionRate}%</span>
                 </div>
@@ -720,7 +720,7 @@ function EmployeeProfilePage() {
             </div>
             
             {/* Performance Chart */}
-            <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-color)', height: '220px' }}>
+            <div style={{ background: 'var(--bg-canvas)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-color)', height: '220px' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={[
                   { name: 'Attendance', Percentage: performance.attendancePercentage },

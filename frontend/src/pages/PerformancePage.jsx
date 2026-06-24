@@ -46,10 +46,10 @@ function PerformancePage() {
   return (
     <div className={styles.card}>
       <div className={styles.header} style={{ display: 'block' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px', flexWrap: 'wrap', gap: '12px' }}>
           <h2 className={styles.title}>Workforce Performance Scoreboard</h2>
-          <div style={{ display: 'flex', gap: '15px' }}>
-            <div className={styles.formGroup} style={{ marginBottom: 0 }}>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <div className={styles.formGroup} style={{ marginBottom: 0, minWidth: '160px' }}>
               <select
                 className={styles.select}
                 value={selectedDept}
@@ -61,7 +61,7 @@ function PerformancePage() {
                 ))}
               </select>
             </div>
-            <div className={styles.formGroup} style={{ marginBottom: 0 }}>
+            <div className={styles.formGroup} style={{ marginBottom: 0, minWidth: '160px' }}>
               <input
                 type="month"
                 className={styles.input}
@@ -78,31 +78,30 @@ function PerformancePage() {
 
       {/* Top Scorers Chart */}
       {chartData.length > 0 && (
-        <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
+        <div style={{ background: 'var(--bg-surface)', padding: '20px', borderRadius: '8px', marginBottom: '30px', border: '1px solid var(--border-color)' }}>
           <h3 style={{ fontSize: '0.9rem', marginBottom: '15px', color: 'var(--text-primary)' }}>Workforce Performance Comparison</h3>
           <div style={{ height: '240px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 45 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-light)" vertical={false} opacity={0.5} />
-                <XAxis dataKey="name" fontSize={11} stroke="#64748b" tickLine={false} axisLine={{ stroke: 'var(--border-light)' }} angle={-45} textAnchor="end" />
+                <XAxis dataKey="name" fontSize={11} stroke="#64748b" tickLine={false} axisLine={{ stroke: 'var(--border-light)' }} />
                 <YAxis fontSize={11} stroke="#64748b" domain={[0, 100]} tickLine={false} axisLine={{ stroke: 'var(--border-light)' }} />
                 <Tooltip 
                   contentStyle={{ 
-                    background: 'rgba(255, 255, 255, 0.95)', 
-                    border: 'none', 
-                    borderRadius: '12px', 
+                    background: 'var(--bg-surface)', 
+                    border: '1px solid var(--border-light)', 
+                    borderRadius: '8px', 
                     fontSize: '0.85rem',
                     fontWeight: 500,
-                    boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
-                    backdropFilter: 'blur(10px)'
+                    boxShadow: '0 8px 30px rgba(0,0,0,0.4)'
                   }}
                   itemStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
                   cursor={{ fill: 'var(--border-light)', opacity: 0.2 }}
                 />
                 <Legend wrapperStyle={{ paddingTop: '10px' }} />
                 <Bar dataKey="Score" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Completion" fill="var(--color-success)" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Attendance" fill="var(--color-warning)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Completion" fill="var(--color-secondary)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Attendance" fill="var(--text-muted)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

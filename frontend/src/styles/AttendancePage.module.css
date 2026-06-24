@@ -1,151 +1,172 @@
 .container {
   min-height: 100vh;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  background: var(--color-canvas);
-}
-
-@media (max-width: 900px) {
-  .container {
-    grid-template-columns: 1fr;
-  }
-}
-
-.brandPanel {
-  background: var(--color-forest-black);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px;
+  background: var(--bg-canvas);
+  padding: var(--spacing-lg);
   position: relative;
 }
 
-.brandContent {
-  max-width: 400px;
-  width: 100%;
-}
-
-.formPanel {
+/* Theme Toggle standalone */
+.themeToggle {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: var(--rounded-sm);
+  padding: var(--spacing-xs);
+  font-size: 1.2rem;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px;
+  transition: all 0.2s;
+}
+.themeToggle:hover {
+  background: var(--color-tertiary);
+}
+
+.brandPanel {
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.logoImg {
+  width: 48px;
+  height: 48px;
+  margin-bottom: var(--spacing-sm);
+}
+
+.brandTitle {
+  font-family: var(--font-family-display);
+  font-size: 33px; /* headline-lg */
+  font-weight: 500;
+  line-height: 48px;
+  letter-spacing: -0.05em;
+  color: var(--text-primary);
+}
+
+.brandSubtitle {
+  font-family: var(--font-family-utility);
+  font-size: 16px; /* body-lg */
+  color: var(--text-secondary);
+}
+
+.formPanel {
+  width: 100%;
+  max-width: 480px;
 }
 
 .card {
-  width: 100%;
-  max-width: 420px;
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  padding: 48px;
+  border-radius: var(--rounded-md);
+  padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--spacing-md);
 }
 
 .header {
-  text-align: left;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 16px;
-  margin-bottom: 8px;
+  text-align: center;
+  margin-bottom: var(--spacing-xs);
 }
 
 .title {
   font-family: var(--font-family-display);
-  font-size: 1.8rem;
-  font-weight: 400;
+  font-size: 25px; /* headline-md */
+  font-weight: 500;
   color: var(--text-primary);
-  margin-bottom: 8px;
+  letter-spacing: -0.05em;
 }
 
 .subtitle {
   font-family: var(--font-family-utility);
-  font-size: 0.85rem;
-  color: var(--text-muted);
+  font-size: 14px; /* body-md */
+  color: var(--text-secondary);
 }
 
-/* GPS Banner */
 .gpsBanner {
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-family: var(--font-family-utility);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: var(--rounded-sm);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-}
-
-.gpsSuccess {
-  background: #F0FDF4;
-  color: #166534;
-  border: 1px solid #BBF7D0;
-}
-
-.gpsWarning {
-  background: #FFFBEB;
-  color: #92400E;
-  border: 1px solid #FDE68A;
+  justify-content: center;
+  gap: 8px;
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
 }
 
 .gpsError {
-  background: #FEF2F2;
-  color: #991B1B;
-  border: 1px solid #FECACA;
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+  border-color: var(--color-danger);
 }
 
-/* Form Controls */
 .formGroup {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--spacing-xs);
 }
 
 .label {
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-family: var(--font-family-utility);
+  font-size: 12px;
+  font-weight: 500;
   color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 
-.select {
-  padding: 12px 14px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-color);
-  background: #fff;
-  font-size: 0.92rem;
+.select, .input, .textarea {
+  background: var(--bg-surface);
   color: var(--text-primary);
+  font-family: var(--font-family-utility);
+  font-size: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--rounded-sm);
+  padding: 12px 16px;
+  height: 48px;
   width: 100%;
-  cursor: pointer;
-  transition: border-color 0.15s;
 }
 
-.select:focus {
+.textarea {
+  height: auto;
+  min-height: 80px;
+}
+
+.select:focus, .input:focus, .textarea:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(15, 81, 50, 0.08);
 }
 
-/* PIN Pad */
 .pinPadContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .pinDisplay {
   display: flex;
-  gap: 12px;
-  margin-bottom: 6px;
+  gap: var(--spacing-xs);
 }
 
 .pinDot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 2px solid #D1D5DB;
-  background: transparent;
-  transition: all 0.12s ease;
+  width: 12px;
+  height: 12px;
+  border-radius: var(--rounded-full);
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
 }
 
 .pinDotFilled {
@@ -156,222 +177,156 @@
 .keypad {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  width: 220px;
+  gap: var(--spacing-xs);
+  width: 240px;
 }
 
 .key {
-  height: 52px;
-  border-radius: 50%;
-  border: 1px solid #E5E7EB;
-  background: #F9FAFB;
-  font-size: 1.15rem;
-  font-weight: 600;
+  height: 48px;
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-color);
+  border-radius: var(--rounded-sm);
+  font-family: var(--font-family-utility);
+  font-size: 16px;
   color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.1s ease;
-  user-select: none;
 }
 
 .key:hover {
-  background: #F3F4F6;
-  border-color: #D1D5DB;
-}
-
-.key:active {
-  transform: scale(0.94);
-  background: #E5E7EB;
+  background: var(--color-tertiary);
 }
 
 .keyClear {
   background: transparent;
   border: none;
-  font-size: 0.82rem;
-  color: var(--text-muted);
+  font-size: 12px;
+  color: var(--text-secondary);
 }
 
-.keyClear:hover {
-  background: transparent;
-  color: var(--color-danger);
-}
-
-/* Action Buttons */
 .actionsContainer {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--spacing-xs);
 }
 
 .btn {
-  padding: 13px;
-  border-radius: var(--radius-sm);
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: #fff;
-  width: 100%;
-  text-align: center;
-  cursor: pointer;
+  font-family: var(--font-family-utility);
+  font-size: 14px;
+  font-weight: 500;
+  height: 40px;
+  padding: 10px 16px;
+  border-radius: var(--rounded-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border: none;
-  transition: opacity 0.15s, transform 0.1s;
-}
-
-.btn:hover {
-  opacity: 0.92;
-}
-
-.btn:active {
-  transform: scale(0.99);
+  width: 100%;
 }
 
 .btnPrimary {
+  background: var(--color-secondary);
+  color: var(--color-surface);
+}
+
+.btnPrimary:hover {
   background: var(--color-primary);
 }
 
-.btnSuccess {
-  background: #16A34A;
-}
-
-.btnWarning {
-  background: #D97706;
-}
-
 .btnDanger {
-  background: var(--color-danger);
+  background: var(--color-surface);
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
 }
 
-/* Status Card */
+.btnCancel {
+  background: transparent;
+  color: var(--color-primary);
+}
+
 .statusCard {
   text-align: center;
-  padding: 20px;
-  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
   border: 1px solid var(--border-color);
-  background: #FAFAFA;
+  border-radius: var(--rounded-md);
+  background: var(--bg-canvas);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
+}
+
+.statusIconWrapper {
+  font-size: 32px;
+  color: var(--color-primary);
 }
 
 .statusName {
-  font-size: 1.05rem;
-  font-weight: 700;
+  font-family: var(--font-family-display);
+  font-size: 19px;
   color: var(--text-primary);
 }
 
 .statusText {
-  font-size: 0.82rem;
-  color: var(--text-muted);
+  font-family: var(--font-family-utility);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.errorCard, .successCard {
+  padding: var(--spacing-md);
+  border-radius: var(--rounded-md);
+  font-family: var(--font-family-utility);
+  font-size: 14px;
+  text-align: center;
 }
 
 .errorCard {
-  background: #FEF2F2;
-  color: var(--color-danger);
-  border: 1px solid #FECACA;
-  padding: 12px 16px;
-  border-radius: var(--radius-sm);
-  font-size: 0.82rem;
-  text-align: center;
+  background: var(--bg-canvas);
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
 }
 
 .successCard {
-  background: #F0FDF4;
-  color: #166534;
-  border: 1px solid #BBF7D0;
-  padding: 20px;
-  border-radius: var(--radius-md);
-  text-align: center;
-  font-weight: 600;
+  background: var(--bg-canvas);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
 }
-
-/* ── Checkout Modal ─────────────────────── */
 
 .modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: var(--spacing-md);
 }
 
 .modalContent {
   width: 100%;
-  max-width: 480px;
-  background: #fff;
-  border-radius: var(--radius-lg);
-  padding: 28px;
+  max-width: 600px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--rounded-md);
+  padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: var(--spacing-md);
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
-  animation: scaleIn 0.2s ease;
 }
 
 .modalTitle {
-  font-size: 1.15rem;
-  font-weight: 700;
+  font-family: var(--font-family-display);
+  font-size: 25px;
   color: var(--text-primary);
-}
-
-.input {
-  padding: 12px 14px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-color);
-  font-size: 0.92rem;
-  color: var(--text-primary);
-  width: 100%;
-  transition: border-color 0.15s;
-}
-
-.input:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(15, 81, 50, 0.08);
-}
-
-.textarea {
-  padding: 12px 14px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-color);
-  font-size: 0.92rem;
-  color: var(--text-primary);
-  width: 100%;
-  resize: vertical;
-  min-height: 80px;
-  transition: border-color 0.15s;
-}
-
-.textarea:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(15, 81, 50, 0.08);
 }
 
 .modalActions {
   display: flex;
-  gap: 10px;
-  margin-top: 6px;
+  gap: var(--spacing-sm);
 }
 
-.btnCancel {
-  background: #F3F4F6;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color);
-}
-
-.btnCancel:hover {
-  background: #E5E7EB;
-  opacity: 1;
+.taskCheckbox {
+  appearance: auto;
 }

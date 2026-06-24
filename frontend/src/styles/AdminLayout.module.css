@@ -91,13 +91,13 @@
 }
 
 .activeNavLink {
-  background: var(--color-primary-light);
+  background: var(--color-tertiary);
   color: var(--color-primary);
   font-weight: 600;
 }
 
 .activeNavLink:hover {
-  background: var(--color-primary-light);
+  background: var(--color-tertiary);
   color: var(--color-primary-hover);
 }
 
@@ -137,7 +137,7 @@
 }
 
 .logoutBtn:hover {
-  background: var(--color-danger-light);
+  background: var(--color-tertiary);
 }
 
 /* ── Main Area ─────────────────────────── */
@@ -189,6 +189,24 @@
   gap: 16px;
 }
 
+/* Theme Toggle */
+.themeToggleBtn {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+}
+
+.themeToggleBtn:hover {
+  background: var(--border-light);
+  color: var(--text-primary);
+}
+
 /* Notifications */
 .notificationArea {
   position: relative;
@@ -232,7 +250,7 @@
   top: 48px;
   right: 0;
   width: 340px;
-  background: #fff;
+  background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
@@ -286,7 +304,7 @@
 }
 
 .notifItemUnread {
-  background: var(--color-primary-light);
+  background: var(--color-tertiary);
 }
 
 .notifEmpty {
@@ -315,7 +333,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%; /* Modern standard is circular avatars */
-  background: var(--color-primary-light);
+  background: var(--color-tertiary);
   color: var(--color-primary);
   display: flex;
   align-items: center;
@@ -346,8 +364,35 @@
   animation: fadeIn 0.3s ease;
 }
 
+@media (max-width: 1400px) {
+  .content { padding: 22px 24px; }
+}
+
+@media (max-width: 1280px) {
+  .content { padding: 20px 18px; }
+  .header { padding: 0 18px; }
+  .pageTitle { font-size: 1.05rem; }
+  .notifDropdown { width: 300px; }
+  .userInfo { display: none; }
+}
+
 @media (max-width: 1024px) {
   .sidebar { width: var(--sidebar-width-collapsed); }
   .mainWrapper { margin-left: var(--sidebar-width-collapsed); }
   .navLabel { display: none; }
+  .content { padding: 16px 14px; }
+  .header { padding: 0 14px; }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: var(--sidebar-width-collapsed);
+    position: fixed;
+  }
+  .mainWrapper { margin-left: var(--sidebar-width-collapsed); }
+  .navLabel { display: none; }
+  .content { padding: 14px 10px; }
+  .header { padding: 0 10px; }
+  .pageTitle { font-size: 0.95rem; }
+  .notifDropdown { width: 260px; right: -40px; }
 }

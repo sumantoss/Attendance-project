@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import AttendancePage from './pages/AttendancePage';
 import LoginPage from './pages/LoginPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import AdminLayout from './components/AdminLayout';
 import DashboardPage from './pages/DashboardPage';
 import EmployeesPage from './pages/EmployeesPage';
@@ -21,8 +23,11 @@ function App() {
         {/* Public QR attendance page */}
         <Route path="/" element={<AttendancePage />} />
         
-        {/* Admin login */}
-        <Route path="/login" element={<LoginPage />} />
+        {/* Auth routes */}
+        <Route path="/admin/login" element={<LoginPage />} />
+        <Route path="/login" element={<Navigate to="/admin/login" replace />} />
+        <Route path="/admin/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/admin/reset-password/:token" element={<ResetPasswordPage />} />
         
         {/* Admin Portal */}
         <Route path="/admin" element={<AdminLayout />}>

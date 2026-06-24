@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { FaMapMarkerAlt, FaCheckCircle, FaUserCheck, FaSignInAlt, FaSignOutAlt } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaCheckCircle, FaUserCheck, FaSignInAlt, FaSignOutAlt, FaSun, FaMoon, FaClock, FaExclamationCircle } from 'react-icons/fa';
 import api from '../services/api';
+import Logo from '../components/Logo';
 import styles from '../styles/AttendancePage.module.css';
 
 function AttendancePage() {
@@ -24,6 +25,17 @@ function AttendancePage() {
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [assignedTasks, setAssignedTasks] = useState([]);
   const [selectedTasksData, setSelectedTasksData] = useState({});
+
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
 
   const resetPin = () => {
     setPin('');
@@ -293,11 +305,15 @@ function AttendancePage() {
 
   return (
     <div className={styles.container}>
+      <button className={styles.themeToggle} onClick={toggleTheme}>
+        {theme === 'light' ? <FaMoon /> : <FaSun />}
+      </button>
+      
       <div className={styles.brandPanel}>
-        <div className={styles.brandContent}>
-          <img src="/logo.png" alt="Cropnow Logo" style={{ width: '80px', height: '80px', objectFit: 'contain', mixBlendMode: 'screen', marginBottom: '24px' }} />
-          <h1 style={{ fontFamily: 'var(--font-family-display)', fontSize: '3rem', fontWeight: 300, color: 'var(--color-canvas)', lineHeight: 1.1, marginBottom: '16px' }}>Cropnow<br />Attendance</h1>
-          <p style={{ color: '#9CA8A0', fontSize: '1rem', fontFamily: 'var(--font-family-utility)' }}>Terminal</p>
+        <div className={styles.header}>
+          <Logo size={56} style={{ marginBottom: '16px', display: 'block', margin: '0 auto 16px auto' }} />
+          <h1 className={styles.title}>Cropnow<br/>Attendance</h1>
+          <p className={styles.brandSubtitle}>Terminal</p>
         </div>
       </div>
       <div className={styles.formPanel}>
@@ -413,13 +429,15 @@ function AttendancePage() {
             {/* Step 4: Available Actions */}
             {pinVerified && employeeStatus && (
               <div className={styles.statusCard}>
-                <FaUserCheck style={{ fontSize: '2rem', color: 'var(--color-primary)' }} />
+                <div className={styles.statusIconWrapper}>
+                  <FaUserCheck />
+                </div>
                 <div>
                   <h3 className={styles.statusName}>{employeeStatus.employee.name}</h3>
                   <p className={styles.statusText}>{employeeStatus.employee.role}</p>
                 </div>
 
-                <div className={styles.actionsContainer} style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div className={styles.actionsContainer}>
                   {/* Case 1: Check In */}
                   {!employeeStatus.checkedIn && (
                     <button 
@@ -479,19 +497,19 @@ function AttendancePage() {
                     <div 
                       key={task._id} 
                       style={{ 
-                        border: '1px solid #e2e8f0', 
+                        padding: '12px', 
                         borderRadius: '8px', 
-                        padding: '15px', 
-                        marginBottom: '15px',
-                        backgroundColor: taskData.checked ? '#f8fafc' : '#fff',
+                        border: '1px solid var(--border-color)', 
+                        marginBottom: '10px',
+                        backgroundColor: taskData.checked ? 'var(--bg-canvas)' : 'var(--bg-card)',
                         boxShadow: taskData.checked ? '0 2px 8px rgba(0,0,0,0.05)' : 'none'
                       }}
                     >
-                      <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontWeight: '600', fontSize: '1rem', color: 'var(--text-primary)' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontWeight: '600', fontSize: '1.05rem', color: 'var(--text-primary)' }}>
                         <input 
                           type="radio" 
                           name="checkoutTask"
-                          style={{ marginRight: '10px', width: '18px', height: '18px' }}
+                          className={styles.taskCheckbox}
                           checked={!!taskData.checked}
                           onChange={(e) => {
                             setSelectedTasksData(prev => {
@@ -503,7 +521,7 @@ function AttendancePage() {
                             });
                           }}
                         />
-                        {task.title} <span style={{ marginLeft: '10px', fontSize: '0.75rem', padding: '2px 8px', borderRadius: '12px', backgroundColor: '#e2e8f0', color: '#475569' }}>{task.project?.name}</span>
+                        {task.title} <span style={{ marginLeft: '10px', fontSize: '0.75rem', padding: '2px 8px', borderRadius: '12px', backgroundColor: 'var(--bg-canvas)', color: 'var(--text-secondary)' }}>{task.project?.name}</span>
                       </label>
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginLeft: '28px', marginTop: '4px' }}>
                         {task.description || 'No description'}
@@ -593,8 +611,8 @@ function AttendancePage() {
                             />
                           </div>
 
-                          <div style={{ marginTop: '5px', padding: '10px', backgroundColor: '#fff', border: '1px dashed #ccc', borderRadius: '6px' }}>
-                            <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontWeight: '500' }}>
+                          <div style={{ marginTop: '5px', padding: '10px', backgroundColor: 'rgba(255, 107, 107, 0.05)', border: '1px dashed var(--color-error)', borderRadius: '6px' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontWeight: '500', color: 'var(--color-error)' }}>
                               <input 
                                 type="checkbox" 
                                 style={{ marginRight: '8px' }}

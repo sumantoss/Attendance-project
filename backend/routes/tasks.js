@@ -85,4 +85,29 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
+// Delete task
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ message: 'Task not found' });
+
+    await Task.findByIdAndDelete(req.params.id);
+
+    await AuditLog.create({
+      action: 'TASK_DELETE',
+      user: 'HR Admin',
+      description: `Deleted task ID ${task._id}: ${task.title}`
+    });
+
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('dashboard-update');
+    }
+
+    res.json({ message: 'Task deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;

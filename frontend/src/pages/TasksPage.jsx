@@ -17,7 +17,7 @@ function TasksPage() {
     description: '',
     priority: 'Medium',
     deadline: '',
-    status: 'Not Started'
+    status: 'In Progress'
   });
   const [error, setError] = useState('');
 
@@ -79,7 +79,7 @@ function TasksPage() {
       description: '',
       priority: 'Medium',
       deadline: new Date(Date.now() + 3*24*60*60*1000).toISOString().split('T')[0],
-      status: 'Not Started'
+      status: 'In Progress'
     });
     setError('');
     setShowModal(true);

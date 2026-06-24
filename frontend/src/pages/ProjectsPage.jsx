@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FaPlus, FaEdit } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaEye, FaTrash } from 'react-icons/fa';
 import api from '../services/api';
 import styles from '../styles/AdminCommon.module.css';
 
@@ -8,6 +8,16 @@ function ProjectsPage() {
   const [employees, setEmployees] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingProj, setEditingProj] = useState(null);
+  const [viewingProj, setViewingProj] = useState(null);
+  const [projectTasks, setProjectTasks] = useState([]);
+  const [showTaskForm, setShowTaskForm] = useState(false);
+  const [taskFormData, setTaskFormData] = useState({
+    title: '',
+    assignedTo: '',
+    priority: 'Medium',
+    deadline: '',
+    description: ''
+  });
   
   const [formData, setFormData] = useState({
     name: '',
@@ -64,6 +74,61 @@ function ProjectsPage() {
     });
     setError('');
     setShowModal(true);
+  };
+
+  const handleOpenView = async (proj) => {
+    setViewingProj(proj);
+    setShowTaskForm(false);
+    try {
+      const res = await api.get(`/reports/tasks?projectId=${proj._id}`);
+      setProjectTasks(res.data);
+    } catch (err) {
+      console.error('Failed to fetch tasks for project', err);
+    }
+  };
+
+  const handleAddTask = async (e) => {
+    e.preventDefault();
+    if (!taskFormData.title || !taskFormData.assignedTo) return;
+    try {
+      await api.post('/tasks', {
+        ...taskFormData,
+        project: viewingProj._id,
+        status: 'In Progress'
+      });
+      const res = await api.get(`/reports/tasks?projectId=${viewingProj._id}`);
+      setProjectTasks(res.data);
+      setShowTaskForm(false);
+      setTaskFormData({ title: '', assignedTo: '', priority: 'Medium', deadline: '', description: '' });
+    } catch (err) {
+      console.error('Failed to create task', err);
+      alert('Failed to create task');
+    }
+  };
+
+  const handleDeleteTask = async (taskId) => {
+    if (!window.confirm('Are you sure you want to delete this task?')) return;
+    try {
+      await api.delete(`/tasks/${taskId}`);
+      const res = await api.get(`/reports/tasks?projectId=${viewingProj._id}`);
+      setProjectTasks(res.data);
+    } catch (err) {
+      console.error('Failed to delete task', err);
+      alert('Failed to delete task: ' + (err.response?.data?.message || err.message));
+    }
+  };
+
+
+  const getGroupedTasks = () => {
+    const grouped = {};
+    projectTasks.forEach(task => {
+      const assigneeId = task.assignedTo?._id || task.assignedTo;
+      const emp = employees.find(e => e._id === assigneeId);
+      const deptName = emp?.department?.name || 'Unassigned Area';
+      if (!grouped[deptName]) grouped[deptName] = [];
+      grouped[deptName].push(task);
+    });
+    return grouped;
   };
 
   const handleToggleMember = (empId) => {
@@ -152,7 +217,7 @@ function ProjectsPage() {
                         <span style={{ fontSize: '0.75rem', color: 'var(--text-light)' }}>No members</span>
                       ) : (
                         proj.teamMembers?.map(m => (
-                          <span key={m._id} className={styles.badge} style={{ backgroundColor: '#EEF2FF', color: '#4F46E5', fontSize: '0.7rem' }}>
+                          <span key={m._id} className={styles.badge} style={{ backgroundColor: 'var(--bg-canvas)', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.7rem' }}>
                             {m.name}
                           </span>
                         ))
@@ -160,13 +225,22 @@ function ProjectsPage() {
                     </div>
                   </td>
                   <td className={styles.td} style={{ textAlign: 'right' }}>
-                    <button
-                      className={`${styles.btn} ${styles.btnSecondary}`}
-                      style={{ display: 'inline-flex', padding: '6px 12px' }}
-                      onClick={() => handleOpenEdit(proj)}
-                    >
-                      <FaEdit /> Edit
-                    </button>
+                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                      <button
+                        className={`${styles.btn} ${styles.btnSecondary}`}
+                        style={{ display: 'inline-flex', padding: '6px 12px' }}
+                        onClick={() => handleOpenView(proj)}
+                      >
+                        <FaEye /> View
+                      </button>
+                      <button
+                        className={`${styles.btn} ${styles.btnSecondary}`}
+                        style={{ display: 'inline-flex', padding: '6px 12px' }}
+                        onClick={() => handleOpenEdit(proj)}
+                      >
+                        <FaEdit /> Edit
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -255,6 +329,95 @@ function ProjectsPage() {
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {viewingProj && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent} style={{ maxWidth: '800px', width: '90%' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 className={styles.title}>{viewingProj.name} - Roadmap</h3>
+              <button onClick={() => setViewingProj(null)} style={{ border: 'none', background: 'transparent', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-secondary)' }}>&times;</button>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxHeight: '60vh', overflowY: 'auto', paddingRight: '10px' }}>
+              {projectTasks.length === 0 ? (
+                <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px 0' }}>No tasks assigned to this project yet.</p>
+              ) : (
+                Object.entries(getGroupedTasks()).map(([deptName, tasks]) => (
+                  <div key={deptName} style={{ background: 'var(--bg-canvas)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                    <h4 style={{ margin: '0 0 12px 0', fontSize: '1.05rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--color-primary)' }}></span>
+                      {deptName}
+                    </h4>
+                    <div style={{ display: 'grid', gap: '10px' }}>
+                      {tasks.map(task => (
+                        <div key={task._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-surface)', padding: '12px', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
+                          <div>
+                            <div style={{ fontWeight: '600', fontSize: '0.95rem', color: 'var(--text-primary)' }}>{task.title}</div>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>Assignee: {task.assignedTo?.name || 'Unknown'}</div>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <span className={`${styles.badge} ${task.status === 'Completed' ? styles.badgeSuccess : task.status === 'Blocked' ? styles.badgeDanger : task.status === 'In Progress' ? styles.badgeWarning : styles.badgeMuted}`}>
+                              {task.status}
+                            </span>
+                            <button 
+                              onClick={() => handleDeleteTask(task._id)}
+                              style={{ background: 'transparent', border: 'none', color: 'var(--color-danger)', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center' }}
+                              title="Delete Task"
+                            >
+                              <FaTrash />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))
+              )}
+              {showTaskForm && (
+                <form onSubmit={handleAddTask} style={{ background: 'var(--bg-canvas)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-color)', marginTop: '10px' }}>
+                  <h4 style={{ margin: '0 0 12px 0', fontSize: '1.05rem', color: 'var(--text-primary)' }}>New Task</h4>
+                  <div style={{ display: 'grid', gap: '10px' }}>
+                    <input className={styles.input} placeholder="Task Title *" value={taskFormData.title} onChange={e => setTaskFormData({...taskFormData, title: e.target.value})} required />
+                    
+                    <select className={styles.select} value={taskFormData.assignedTo} onChange={e => setTaskFormData({...taskFormData, assignedTo: e.target.value})} required>
+                      <option value="">-- Assign To --</option>
+                      {employees.map(emp => (
+                        <option key={emp._id} value={emp._id}>{emp.name} ({emp.role})</option>
+                      ))}
+                    </select>
+
+                    <textarea className={styles.textarea} style={{ minHeight: '60px' }} placeholder="Task Description" value={taskFormData.description} onChange={e => setTaskFormData({...taskFormData, description: e.target.value})} />
+
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <select className={styles.select} value={taskFormData.priority} onChange={e => setTaskFormData({...taskFormData, priority: e.target.value})}>
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                      </select>
+                      <input type="date" className={styles.input} value={taskFormData.deadline} onChange={e => setTaskFormData({...taskFormData, deadline: e.target.value})} />
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '10px' }}>
+                      <button type="button" className={`${styles.btn} ${styles.btnSecondary}`} onClick={() => setShowTaskForm(false)}>Cancel</button>
+                      <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>Save Task</button>
+                    </div>
+                  </div>
+                </form>
+              )}
+            </div>
+            <div className={styles.actions} style={{ alignSelf: 'flex-end', marginTop: '15px' }}>
+              {!showTaskForm && (
+                <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => setShowTaskForm(true)}>
+                  <FaPlus /> Add Task
+                </button>
+              )}
+              <button type="button" className={`${styles.btn} ${styles.btnSecondary}`} onClick={() => setViewingProj(null)}>
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

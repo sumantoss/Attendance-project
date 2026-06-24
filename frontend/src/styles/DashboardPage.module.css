@@ -1,33 +1,33 @@
-/* ── Dashboard Page (Fireart Studio Style) ─────────────────────────── */
+/* ── Dashboard Page (TestSprite Light Style) ─────────────────────────── */
 
 /* ── Alert Banner ─────────────────────────── */
 .alertBanner {
   background: var(--color-danger-light);
-  border-left: 4px solid var(--color-danger);
-  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--color-error);
+  border-radius: var(--rounded-sm);
   padding: 14px 18px;
   margin-bottom: 20px;
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 0.86rem;
-  color: var(--color-danger);
+  font-family: var(--font-family-utility);
+  font-size: 14px;
+  color: var(--color-error);
   font-weight: 500;
   animation: fadeIn 0.3s ease;
-  box-shadow: var(--shadow-sm);
 }
 
 /* ── Shift Clock ─────────────────────────── */
 .shiftBanner {
-  background: #1F2937; /* Deep Slate/Charcoal */
-  color: #fff;
+  background: var(--bg-surface); 
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   padding: 24px 28px;
   margin-bottom: 24px;
-  border-radius: var(--radius-md);
+  border-radius: var(--rounded-md);
   display: flex;
   align-items: center;
   gap: 20px;
-  box-shadow: var(--shadow-md);
 }
 
 .shiftDotWrap {
@@ -40,34 +40,37 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--color-success);
-  box-shadow: 0 0 8px var(--color-success);
+  background: var(--color-primary);
+  box-shadow: 0 0 8px var(--color-primary);
   animation: pulse 2s ease-in-out infinite;
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--color-success); }
-  50% { opacity: 0.5; box-shadow: 0 0 14px var(--color-success); }
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--color-primary); }
+  50% { opacity: 0.5; box-shadow: 0 0 14px var(--color-primary); }
 }
 
 .shiftLabel {
-  font-size: 0.72rem;
+  font-family: var(--font-family-utility);
+  font-size: 12px;
   font-weight: 700;
-  color: var(--color-success);
+  color: var(--color-primary);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
 .shiftTime {
-  font-size: 2.2rem;
-  font-weight: 600;
-  color: #fff;
+  font-family: var(--font-family-display);
+  font-size: 44px;
+  font-weight: 500;
+  color: var(--text-primary);
   line-height: 1;
 }
 
 .shiftDate {
-  font-size: 0.84rem;
-  color: #9CA3AF;
+  font-family: var(--font-family-utility);
+  font-size: 14px;
+  color: var(--text-muted);
   margin-left: auto;
 }
 
@@ -90,8 +93,7 @@
 .kpiCard {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--rounded-md);
   padding: 22px 24px;
   display: flex;
   flex-direction: column;
@@ -101,9 +103,8 @@
 }
 
 .kpiCard:hover {
-  box-shadow: var(--shadow-md);
   transform: translateY(-2px);
-  border-color: #D1D5DB;
+  border-color: var(--color-primary);
 }
 
 .kpiHeader {
@@ -119,9 +120,10 @@
 }
 
 .kpiTitle {
-  font-size: 0.75rem;
+  font-family: var(--font-family-utility);
+  font-size: 12px;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -129,13 +131,13 @@
 .kpiIconWrapper {
   width: 40px;
   height: 40px;
-  border-radius: 50%; /* Modern circular icons */
+  border-radius: var(--rounded-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 18px;
   color: var(--kpi-accent, var(--color-primary));
-  background: var(--kpi-bg, var(--color-primary-light));
+  background: var(--kpi-bg, var(--color-neutral));
   transition: transform 0.2s ease-in-out;
 }
 
@@ -144,16 +146,18 @@
 }
 
 .kpiValue {
-  font-size: 2rem;
-  font-weight: 700;
+  font-family: var(--font-family-display);
+  font-size: 33px;
+  font-weight: 500;
   color: var(--text-primary);
   line-height: 1;
   margin-top: 6px;
 }
 
 .kpiFooter {
-  font-size: 0.75rem;
-  color: var(--text-light);
+  font-family: var(--font-family-utility);
+  font-size: 12px;
+  color: var(--text-secondary);
   margin-top: 4px;
   display: flex;
   align-items: center;
@@ -181,25 +185,20 @@
 .chartCard {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--rounded-md);
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  transition: box-shadow 0.2s ease-in-out;
-}
-
-.chartCard:hover {
-  box-shadow: var(--shadow-md);
 }
 
 .chartTitle {
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-family: var(--font-family-display);
+  font-size: 19px;
+  font-weight: 500;
   color: var(--text-primary);
   padding-bottom: 12px;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .chartContainer {
@@ -222,33 +221,29 @@
 .recentCard {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--rounded-md);
   padding: 24px;
-  transition: box-shadow 0.2s ease-in-out;
-}
-
-.recentCard:hover {
-  box-shadow: var(--shadow-md);
 }
 
 .recentTitle {
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-family: var(--font-family-display);
+  font-size: 19px;
+  font-weight: 500;
   color: var(--text-primary);
   margin-bottom: 16px;
   padding-bottom: 12px;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .count {
-  font-size: 0.75rem;
+  font-family: var(--font-family-utility);
+  font-size: 12px;
   font-weight: 600;
   padding: 2px 8px;
-  border-radius: 9999px;
+  border-radius: var(--rounded-sm);
 }
 
 .list {
@@ -260,12 +255,12 @@
 .listItem {
   padding: 12px 14px;
   border: 1px solid transparent;
-  border-radius: var(--radius-sm);
+  border-radius: var(--rounded-sm);
   transition: all 0.2s ease-in-out;
 }
 
 .listItem:hover {
-  background: var(--color-canvas);
+  background: var(--bg-canvas);
   border-color: var(--border-color);
 }
 
@@ -277,18 +272,21 @@
 }
 
 .listItemTitle {
+  font-family: var(--font-family-utility);
   font-weight: 600;
-  font-size: 0.88rem;
+  font-size: 14px;
   color: var(--text-primary);
 }
 
 .listItemMeta {
-  font-size: 0.8rem;
+  font-family: var(--font-family-utility);
+  font-size: 12px;
   color: var(--text-muted);
 }
 
 .listItemDesc {
-  font-size: 0.82rem;
+  font-family: var(--font-family-utility);
+  font-size: 14px;
   color: var(--text-secondary);
   margin-top: 6px;
   line-height: 1.5;
@@ -296,30 +294,35 @@
 
 /* ── Badges ─────────────────────────── */
 .badge {
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-family: var(--font-family-utility);
+  font-size: 12px;
+  font-weight: 500;
   padding: 3px 8px;
-  border-radius: 9999px;
+  border-radius: var(--rounded-sm);
 }
 
 .badgeDanger {
   background: var(--color-danger-light);
-  color: var(--color-danger);
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
 }
 
 .badgeWarning {
-  background: var(--color-warning-light);
+  background: var(--bg-canvas);
   color: #D97706;
+  border: 1px solid #D97706;
 }
 
 .badgeSuccess {
-  background: var(--color-success-light);
-  color: var(--color-success);
+  background: var(--bg-canvas);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
 }
 
 .badgeInfo {
-  background: var(--color-info-light);
-  color: var(--color-info);
+  background: var(--bg-canvas);
+  color: var(--text-primary);
+  border: 1px solid var(--text-primary);
 }
 
 /* ── Performance Snapshot ─────────────────────────── */
@@ -336,7 +339,8 @@
 }
 
 .perfLabel {
-  font-size: 0.75rem;
+  font-family: var(--font-family-utility);
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -348,13 +352,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 12px;
-  border-radius: var(--radius-sm);
-  font-size: 0.85rem;
+  border-radius: var(--rounded-sm);
+  font-family: var(--font-family-utility);
+  font-size: 14px;
   transition: background 0.15s;
 }
 
 .perfItem:hover {
-  background: var(--color-canvas);
+  background: var(--bg-canvas);
 }
 
 .perfName {
@@ -363,10 +368,10 @@
 }
 
 .perfValue {
-  font-size: 0.75rem;
+  font-size: 12px;
   font-weight: 600;
   padding: 2px 8px;
-  border-radius: 9999px;
+  border-radius: var(--rounded-sm);
 }
 
 /* ── Empty State ─────────────────────────── */
@@ -374,5 +379,56 @@
   padding: 24px;
   text-align: center;
   color: var(--text-muted);
-  font-size: 0.88rem;
+  font-family: var(--font-family-utility);
+  font-size: 14px;
+}
+
+/* ── Laptop Responsiveness ─────────────────────────── */
+
+@media (max-width: 1400px) {
+  .metricsGrid { gap: 16px; }
+  .kpiCard { padding: 18px 20px; }
+  .kpiValue { font-size: 28px; }
+  .chartCard { padding: 20px; }
+  .chartContainer { height: 250px; }
+  .recentCard { padding: 20px; }
+  .shiftBanner { padding: 20px 24px; }
+  .shiftTime { font-size: 33px; }
+}
+
+@media (max-width: 1280px) {
+  .shiftBanner { padding: 16px 20px; gap: 16px; flex-wrap: wrap; }
+  .shiftTime { font-size: 33px; }
+  .shiftDate { font-size: 12px; }
+  .kpiCard { padding: 16px 18px; }
+  .kpiValue { font-size: 25px; }
+  .kpiTitle { font-size: 11px; }
+  .kpiIconWrapper { width: 36px; height: 36px; font-size: 16px; }
+  .chartCard { padding: 18px; gap: 12px; }
+  .chartTitle { font-size: 19px; }
+  .chartContainer { height: 230px; }
+  .recentCard { padding: 18px; }
+  .recentTitle { font-size: 19px; }
+  .chartsGrid { gap: 16px; }
+  .recentGrid { gap: 16px; }
+  .metricsGrid { gap: 14px; margin-bottom: 24px; }
+}
+
+@media (max-width: 1024px) {
+  .metricsGrid { grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+  .chartsGrid { grid-template-columns: 1fr; gap: 14px; }
+  .recentGrid { grid-template-columns: 1fr; gap: 14px; }
+  .shiftBanner { gap: 12px; }
+  .chartContainer { height: 220px; }
+  .perfGrid { grid-template-columns: 1fr; gap: 16px; }
+}
+
+@media (max-width: 768px) {
+  .shiftBanner { flex-direction: column; align-items: flex-start; padding: 14px 16px; gap: 6px; }
+  .shiftDate { margin-left: 0; }
+  .shiftTime { font-size: 25px; }
+  .metricsGrid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .kpiCard { padding: 14px; }
+  .kpiValue { font-size: 25px; }
+  .chartContainer { height: 200px; }
 }

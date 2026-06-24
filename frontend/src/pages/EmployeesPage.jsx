@@ -32,7 +32,7 @@ const deptStyles = {
     border: '1px solid var(--border-color)',
     borderRadius: 'var(--radius-sm)',
     fontSize: '0.9rem',
-    background: '#fff',
+    background: 'var(--bg-surface)',
     outline: 'none',
     transition: 'all 0.2s ease-in-out',
   },
@@ -43,7 +43,7 @@ const deptStyles = {
     fontWeight: active ? '600' : '500',
     cursor: 'pointer',
     border: active ? '1.5px solid var(--color-primary)' : '1px solid var(--border-color)',
-    background: active ? 'var(--color-primary-light, #EEF2FF)' : '#fff',
+    background: active ? 'var(--bg-canvas)' : 'var(--bg-surface)',
     color: active ? 'var(--color-primary)' : 'var(--text-secondary)',
     display: 'inline-flex',
     alignItems: 'center',
@@ -53,7 +53,7 @@ const deptStyles = {
   }),
   countBubble: (active) => ({
     background: active ? 'var(--color-primary)' : 'var(--border-color)',
-    color: active ? '#fff' : 'var(--text-secondary)',
+    color: active ? 'var(--color-surface)' : 'var(--text-secondary)',
     borderRadius: '9999px',
     padding: '1px 7px',
     fontSize: '0.72rem',
@@ -65,7 +65,7 @@ const deptStyles = {
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: '14px 20px',
-    background: expanded ? 'var(--color-canvas, #F9FAFB)' : '#fff',
+    background: expanded ? 'var(--bg-canvas)' : 'var(--bg-surface)',
     borderBottom: '1px solid var(--border-color)',
     cursor: 'pointer',
     userSelect: 'none',
@@ -455,7 +455,7 @@ function EmployeesPage() {
       {/* Add / Edit Modal (unchanged) */}
       {showModal && (
         <div className={styles.modalOverlay}>
-          <form className={styles.modalContent} style={{ maxWidth: '550px' }} onSubmit={handleSubmit}>
+          <form className={styles.modalContent} style={{ maxWidth: '550px', maxHeight: '90vh', overflowY: 'auto' }} onSubmit={handleSubmit}>
             <h3 className={styles.title}>{editingEmp ? 'Edit Employee Profile' : 'Add Employee Profile'}</h3>
 
             {error && <div className={styles.badgeDanger} style={{ padding: '8px', borderRadius: '4px', textAlign: 'center', marginBottom: '10px' }}>{error}</div>}

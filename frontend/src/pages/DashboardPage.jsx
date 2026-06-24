@@ -11,7 +11,7 @@ import api from '../services/api';
 import styles from '../styles/DashboardPage.module.css';
 import { io } from 'socket.io-client';
 
-const COLORS = ['#28593D', '#D4E05B', '#315C85', '#C84C31'];
+const COLORS = ['#4d8c58', '#030303', '#7b7b7b', '#d64545'];
 
 function DashboardPage() {
   const [summary, setSummary] = useState({
@@ -223,14 +223,14 @@ function DashboardPage() {
   };
 
   const kpis = [
-    { key: 'totalEmployees', title: 'Total Employees', value: summary.totalEmployees, icon: <FaUsers />, color: '#28593D', bg: '#E6EBE8' },
-    { key: 'presentToday', title: 'Present Today', value: summary.presentToday, icon: <FaUserCheck />, color: '#28593D', bg: '#E6EBE8' },
-    { key: 'absentToday', title: 'Absent Today', value: summary.absentToday, icon: <FaUserTimes />, color: '#C84C31', bg: '#F5E2DF' },
-    { key: 'lateToday', title: 'Late Arrivals', value: summary.lateToday, icon: <FaClock />, color: '#92400E', bg: '#FEF3C7' },
-    { key: 'activeProjects', title: 'Active Projects', value: summary.activeProjects, icon: <FaFolder />, color: '#315C85', bg: '#E0E8F0' },
-    { key: 'pendingTasks', title: 'Pending Tasks', value: summary.pendingTasks, icon: <FaListAlt />, color: '#315C85', bg: '#E0E8F0' },
-    { key: 'openBlockers', title: 'Open Blockers', value: summary.openBlockers, icon: <FaExclamationTriangle />, color: '#C84C31', bg: '#F5E2DF' },
-    { key: 'pendingEOD', title: 'Pending EOD', value: summary.pendingDailyUpdates, icon: <FaEdit />, color: '#92400E', bg: '#FEF3C7' },
+    { key: 'totalEmployees', title: 'Total Employees', value: summary.totalEmployees, icon: <FaUsers />, color: '#4d8c58', bg: '#f5faf2' },
+    { key: 'presentToday', title: 'Present Today', value: summary.presentToday, icon: <FaUserCheck />, color: '#4d8c58', bg: '#f5faf2' },
+    { key: 'absentToday', title: 'Absent Today', value: summary.absentToday, icon: <FaUserTimes />, color: '#d64545', bg: '#fee2e2' },
+    { key: 'lateToday', title: 'Late Arrivals', value: summary.lateToday, icon: <FaClock />, color: '#d64545', bg: '#fee2e2' },
+    { key: 'activeProjects', title: 'Active Projects', value: summary.activeProjects, icon: <FaFolder />, color: '#030303', bg: '#e5e7eb' },
+    { key: 'pendingTasks', title: 'Pending Tasks', value: summary.pendingTasks, icon: <FaListAlt />, color: '#030303', bg: '#e5e7eb' },
+    { key: 'openBlockers', title: 'Open Blockers', value: summary.openBlockers, icon: <FaExclamationTriangle />, color: '#d64545', bg: '#fee2e2' },
+    { key: 'pendingEOD', title: 'Pending EOD', value: summary.pendingDailyUpdates, icon: <FaEdit />, color: '#d64545', bg: '#fee2e2' },
   ];
 
   const getStatusBadgeClass = (status) => {
@@ -301,32 +301,32 @@ function DashboardPage() {
               <AreaChart data={charts.attendanceTrend}>
                 <defs>
                   <linearGradient id="gradPresent" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#28593D" stopOpacity={0.15}/>
-                    <stop offset="95%" stopColor="#28593D" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#4d8c58" stopOpacity={0.15}/>
+                    <stop offset="95%" stopColor="#4d8c58" stopOpacity={0}/>
                   </linearGradient>
                   <linearGradient id="gradLate" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#C84C31" stopOpacity={0.1}/>
-                    <stop offset="95%" stopColor="#C84C31" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#d64545" stopOpacity={0.1}/>
+                    <stop offset="95%" stopColor="#d64545" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-light)" vertical={false} opacity={0.5} />
-                <XAxis dataKey="day" stroke="#9CA8A0" fontSize={11} tickLine={false} axisLine={{ stroke: 'var(--border-light)' }} />
-                <YAxis stroke="#9CA8A0" fontSize={11} allowDecimals={false} tickLine={false} axisLine={{ stroke: 'var(--border-light)' }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} opacity={0.5} />
+                <XAxis dataKey="day" stroke="var(--text-secondary)" fontSize={11} tickLine={false} axisLine={{ stroke: 'var(--border-color)' }} />
+                <YAxis stroke="var(--text-secondary)" fontSize={11} allowDecimals={false} tickLine={false} axisLine={{ stroke: 'var(--border-color)' }} />
                 <Tooltip 
                   contentStyle={{ 
-                    background: 'rgba(255, 255, 255, 0.95)', 
-                    border: 'none', 
-                    borderRadius: '12px', 
-                    fontSize: '0.85rem',
+                    background: 'var(--bg-surface)', 
+                    border: '1px solid var(--border-color)', 
+                    borderRadius: '8px', 
+                    fontSize: '14px',
+                    fontFamily: 'var(--font-family-utility)',
                     fontWeight: 500,
-                    boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
-                    backdropFilter: 'blur(10px)'
+                    boxShadow: 'var(--shadow-md)',
                   }} 
                   itemStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
                 />
-                <Legend iconType="square" wrapperStyle={{ paddingTop: '12px', fontSize: '0.8rem' }} />
-                <Area type="monotone" dataKey="Present" stroke="#28593D" strokeWidth={2} fill="url(#gradPresent)" dot={{ r: 3, fill: '#28593D', stroke: '#fff', strokeWidth: 2 }} activeDot={{ r: 5 }} />
-                <Area type="monotone" dataKey="Late" stroke="#C84C31" strokeWidth={2} fill="url(#gradLate)" dot={{ r: 3, fill: '#C84C31', stroke: '#fff', strokeWidth: 2 }} activeDot={{ r: 5 }} />
+                <Legend iconType="square" wrapperStyle={{ paddingTop: '12px', fontSize: '14px', fontFamily: 'var(--font-family-utility)' }} />
+                <Area type="monotone" dataKey="Present" stroke="#4d8c58" strokeWidth={2} fill="url(#gradPresent)" dot={{ r: 3, fill: '#4d8c58', stroke: 'var(--bg-surface)', strokeWidth: 2 }} activeDot={{ r: 5 }} />
+                <Area type="monotone" dataKey="Late" stroke="#d64545" strokeWidth={2} fill="url(#gradLate)" dot={{ r: 3, fill: '#d64545', stroke: 'var(--bg-surface)', strokeWidth: 2 }} activeDot={{ r: 5 }} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -355,17 +355,17 @@ function DashboardPage() {
                 </Pie>
                 <Tooltip 
                   contentStyle={{ 
-                    background: 'rgba(255, 255, 255, 0.95)', 
-                    border: 'none', 
-                    borderRadius: '12px', 
-                    fontSize: '0.85rem',
+                    background: 'var(--bg-surface)', 
+                    border: '1px solid var(--border-color)', 
+                    borderRadius: '8px', 
+                    fontSize: '14px',
+                    fontFamily: 'var(--font-family-utility)',
                     fontWeight: 500,
-                    boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
-                    backdropFilter: 'blur(10px)'
+                    boxShadow: 'var(--shadow-md)',
                   }}
                   itemStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
                 />
-                <Legend verticalAlign="bottom" height={36} iconType="square" wrapperStyle={{ fontSize: '0.78rem' }} />
+                <Legend verticalAlign="bottom" height={36} iconType="square" wrapperStyle={{ fontSize: '14px', fontFamily: 'var(--font-family-utility)' }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -379,22 +379,22 @@ function DashboardPage() {
           <div className={styles.chartContainer}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={charts.departmentData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-light)" horizontal={false} opacity={0.5} />
-                <XAxis type="number" stroke="#9CA8A0" fontSize={11} allowDecimals={false} tickLine={false} axisLine={{ stroke: 'var(--border-light)' }} />
-                <YAxis type="category" dataKey="name" stroke="#6B7A70" fontSize={11} width={100} tickLine={false} axisLine={{ stroke: 'var(--border-light)' }} fontWeight={600} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" horizontal={false} opacity={0.5} />
+                <XAxis type="number" stroke="var(--text-secondary)" fontSize={11} allowDecimals={false} tickLine={false} axisLine={{ stroke: 'var(--border-color)' }} />
+                <YAxis type="category" dataKey="name" stroke="var(--text-secondary)" fontSize={11} width={100} tickLine={false} axisLine={{ stroke: 'var(--border-color)' }} fontWeight={600} />
                 <Tooltip 
                   contentStyle={{ 
-                    background: 'rgba(255, 255, 255, 0.95)', 
-                    border: 'none', 
-                    borderRadius: '12px', 
-                    fontSize: '0.85rem',
+                    background: 'var(--bg-surface)', 
+                    border: '1px solid var(--border-color)', 
+                    borderRadius: '8px', 
+                    fontSize: '14px',
+                    fontFamily: 'var(--font-family-utility)',
                     fontWeight: 500,
-                    boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
-                    backdropFilter: 'blur(10px)'
+                    boxShadow: 'var(--shadow-md)',
                   }}
                   itemStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
                 />
-                <Bar dataKey="value" fill="#28593D" name="Headcount" barSize={24} radius={[0, 6, 6, 0]} />
+                <Bar dataKey="value" fill="#4d8c58" name="Headcount" barSize={24} radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -406,7 +406,7 @@ function DashboardPage() {
         <div className={styles.recentCard}>
           <h2 className={styles.recentTitle}>
             Open Blockers
-            <span className={styles.count} style={{ background: blockers.length > 0 ? '#F5E2DF' : '#E6EBE8', color: blockers.length > 0 ? '#C84C31' : '#28593D' }}>
+            <span className={styles.count} style={{ background: blockers.length > 0 ? '#fee2e2' : '#f5faf2', color: blockers.length > 0 ? '#d64545' : '#4d8c58' }}>
               {blockers.length}
             </span>
           </h2>
@@ -438,27 +438,27 @@ function DashboardPage() {
           <h2 className={styles.recentTitle}>Performance Snapshot</h2>
           <div className={styles.perfGrid}>
             <div className={styles.perfSection}>
-              <span className={styles.perfLabel} style={{ color: '#28593D' }}>Top Performers</span>
+              <span className={styles.perfLabel} style={{ color: '#4d8c58' }}>Top Performers</span>
               {topPerformers.length === 0 ? (
                 <div className={styles.emptyState}>No data available.</div>
               ) : (
                 topPerformers.map(p => (
                   <div key={p._id} className={styles.perfItem}>
                     <span className={styles.perfName}>{p.name}</span>
-                    <span className={styles.perfValue} style={{ background: '#E6EBE8', color: '#28593D' }}>{p.taskCompletionRate}%</span>
+                    <span className={styles.perfValue} style={{ background: '#f5faf2', color: '#4d8c58' }}>{p.taskCompletionRate}%</span>
                   </div>
                 ))
               )}
             </div>
             <div className={styles.perfSection}>
-              <span className={styles.perfLabel} style={{ color: '#C84C31' }}>Needs Attention</span>
+              <span className={styles.perfLabel} style={{ color: '#d64545' }}>Needs Attention</span>
               {needsAttention.length === 0 ? (
                 <div className={styles.emptyState}>No data available.</div>
               ) : (
                 needsAttention.map(p => (
                   <div key={p._id} className={styles.perfItem}>
                     <span className={styles.perfName}>{p.name}</span>
-                    <span className={styles.perfValue} style={{ background: '#F5E2DF', color: '#C84C31' }}>{p.overdueTasks} overdue</span>
+                    <span className={styles.perfValue} style={{ background: '#fee2e2', color: '#d64545' }}>{p.overdueTasks} overdue</span>
                   </div>
                 ))
               )}
@@ -470,7 +470,7 @@ function DashboardPage() {
         <div className={styles.recentCard}>
           <h2 className={styles.recentTitle}>
             Today's EOD Updates
-            <span className={styles.count} style={{ background: '#E6EBE8', color: '#28593D' }}>
+            <span className={styles.count} style={{ background: '#f5faf2', color: '#4d8c58' }}>
               {recentUpdates.length}
             </span>
           </h2>
@@ -500,45 +500,46 @@ function DashboardPage() {
       {kpiModal.open && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(26, 33, 28, 0.5)',
+          background: 'rgba(0, 0, 0, 0.5)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           zIndex: 1000, padding: '20px'
         }} onClick={() => setKpiModal({ ...kpiModal, open: false })}>
           <div style={{
-            background: '#fff', width: '100%', maxWidth: '720px',
+            background: 'var(--bg-surface)', width: '100%', maxWidth: '720px',
             maxHeight: '80vh', display: 'flex', flexDirection: 'column',
             border: '1px solid var(--border-color)',
-            animation: 'scaleIn 0.2s ease'
+            animation: 'scaleIn 0.2s ease',
+            borderRadius: '10px', overflow: 'hidden'
           }} onClick={(e) => e.stopPropagation()}>
             {/* Modal Header */}
             <div style={{
-              padding: '18px 24px', borderBottom: '1px solid #D1D5CE',
+              padding: '18px 24px', borderBottom: '1px solid var(--border-color)',
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              background: '#F4F5F2'
+              background: 'var(--bg-canvas)'
             }}>
               <div>
-                <h2 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#1A211C', margin: 0 }}>{kpiModal.title}</h2>
-                <span style={{ fontSize: '0.75rem', color: '#6B7A70' }}>
+                <h2 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>{kpiModal.title}</h2>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                   {kpiModal.loading ? 'Loading...' : `${kpiModal.data.length} result(s)`}
                 </span>
               </div>
               <button onClick={() => setKpiModal({ ...kpiModal, open: false })} style={{
-                width: '32px', height: '32px', border: '1px solid #D1D5CE',
+                width: '32px', height: '32px', border: '1px solid var(--border-color)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer', background: '#fff', color: '#6B7A70', fontSize: '0.9rem'
+                cursor: 'pointer', background: 'var(--bg-surface)', color: 'var(--text-secondary)', fontSize: '0.9rem'
               }}>
                 <FaTimes />
               </button>
             </div>
 
             {/* Modal Body */}
-            <div style={{ padding: '0', overflowY: 'auto', flex: 1 }}>
+            <div style={{ padding: '0', overflowY: 'auto', overflowX: 'auto', flex: 1 }}>
               {kpiModal.loading ? (
-                <div style={{ padding: '40px', textAlign: 'center', color: '#9CA8A0', fontSize: '0.88rem' }}>
+                <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.88rem' }}>
                   Loading details...
                 </div>
               ) : kpiModal.data.length === 0 ? (
-                <div style={{ padding: '40px', textAlign: 'center', color: '#9CA8A0', fontSize: '0.88rem' }}>
+                <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.88rem' }}>
                   No records found.
                 </div>
               ) : (
@@ -547,10 +548,10 @@ function DashboardPage() {
                     <tr>
                       {kpiModal.columns.map((col, i) => (
                         <th key={i} style={{
-                          padding: '10px 16px', textAlign: 'left', background: '#F4F5F2',
-                          color: '#6B7A70', fontWeight: 700, fontSize: '0.72rem',
+                          padding: '10px 16px', textAlign: 'left', background: 'var(--bg-canvas)',
+                          color: 'var(--text-secondary)', fontWeight: 700, fontSize: '0.72rem',
                           textTransform: 'uppercase', letterSpacing: '0.06em',
-                          borderBottom: '2px solid #D1D5CE', position: 'sticky', top: 0
+                          borderBottom: '1px solid var(--border-color)', position: 'sticky', top: 0
                         }}>{col}</th>
                       ))}
                     </tr>
@@ -559,10 +560,10 @@ function DashboardPage() {
                     {kpiModal.data.map((row, i) => {
                       const vals = Object.values(row);
                       return (
-                        <tr key={i} style={{ borderBottom: '1px solid #E5E8E2' }}>
+                        <tr key={i} style={{ borderBottom: '1px solid var(--border-color)' }}>
                           {vals.map((v, j) => (
                             <td key={j} style={{
-                              padding: '11px 16px', color: j === 0 ? '#1A211C' : '#424E46',
+                              padding: '11px 16px', color: j === 0 ? 'var(--text-primary)' : 'var(--text-secondary)',
                               fontWeight: j === 0 ? 600 : 400
                             }}>
                               {j === vals.length - 1 ? (

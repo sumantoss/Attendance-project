@@ -110,7 +110,7 @@ function BlockersPage() {
                           {b.status === 'Open' && (
                             <button
                               className={`${styles.btn}`}
-                              style={{ padding: '6px 12px', fontSize: '0.75rem', backgroundColor: '#e2e8f0', color: '#1e293b', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                              style={{ padding: '6px 12px', fontSize: '0.75rem', backgroundColor: 'var(--bg-canvas)', color: 'var(--text-primary)', border: '1px solid var(--border-color)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                               onClick={() => handleUpdateStatus(b._id, 'In Review')}
                             >
                               <FaSync /> In Review

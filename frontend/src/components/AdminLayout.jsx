@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import Logo from './Logo';
 import { 
   FaThLarge, FaUsers, FaBuilding, FaFolderOpen, 
   FaCheckSquare, FaFileAlt, FaCog, FaHistory, 
-  FaSignOutAlt, FaBars, FaBell, FaExclamationTriangle, FaListAlt, FaChartLine 
+  FaSignOutAlt, FaBars, FaBell, FaExclamationTriangle, FaListAlt, FaChartLine,
+  FaSun, FaMoon
 } from 'react-icons/fa';
 import api from '../services/api';
 import styles from '../styles/AdminLayout.module.css';
@@ -14,9 +16,19 @@ function AdminLayout() {
   const [notifications, setNotifications] = useState([]);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const [adminUser, setAdminUser] = useState('');
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
 
   const fetchNotifications = async () => {
     try {
@@ -108,7 +120,13 @@ function AdminLayout() {
   // Page titles map
   const getPageTitle = () => {
     const activeItem = menuItems.find(item => item.path === location.pathname);
-    return activeItem ? activeItem.label : 'Admin Portal';
+    if (activeItem) return activeItem.label;
+    
+    if (location.pathname.startsWith('/admin/employees/')) return 'Employee Details';
+    if (location.pathname.startsWith('/admin/projects/')) return 'Project Details';
+    if (location.pathname.startsWith('/admin/tasks/')) return 'Task Details';
+    
+    return 'Admin Portal';
   };
 
   return (
@@ -118,11 +136,11 @@ function AdminLayout() {
         <div className={styles.logoArea}>
           {!collapsed ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <img src="/logo.png" alt="Cropnow Logo" style={{ width: '32px', height: '32px', objectFit: 'contain', mixBlendMode: 'screen' }} />
+              <Logo size={32} />
               <span className={styles.logoText}>Cropnow Admin</span>
             </div>
           ) : (
-            <img src="/logo.png" alt="Cropnow Logo" style={{ width: '24px', height: '24px', objectFit: 'contain', margin: '0 auto', mixBlendMode: 'screen' }} />
+            <Logo size={28} style={{ margin: '0 auto' }} />
           )}
           <div className={styles.toggleBtn} onClick={() => setCollapsed(!collapsed)} style={{ marginLeft: collapsed ? '0' : 'auto' }}>
             <FaBars />
@@ -156,6 +174,11 @@ function AdminLayout() {
             <h1 className={styles.pageTitle}>{getPageTitle()}</h1>
           </div>
           <div className={styles.headerRight}>
+            {/* Theme Toggle */}
+            <div className={styles.themeToggleBtn} onClick={toggleTheme}>
+              {theme === 'light' ? <FaMoon /> : <FaSun />}
+            </div>
+
             {/* Notifications Dropdown */}
             <div className={styles.notificationArea}>
               <div 

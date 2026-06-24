@@ -22,6 +22,7 @@ function ReportsPage() {
     endDate: new Date().toISOString().split('T')[0],
     employeeId: ''
   }));
+  const [attEmployeeName, setAttEmployeeName] = useState('');
 
   // Task Filters
   const [taskFilter, setTaskFilter] = useState({
@@ -29,6 +30,7 @@ function ReportsPage() {
     employeeId: '',
     status: ''
   });
+  const [taskAssigneeName, setTaskAssigneeName] = useState('');
 
   const loadReportData = useCallback(() => {
     if (activeTab === 'attendance') {
@@ -187,21 +189,27 @@ function ReportsPage() {
             </div>
             <div className={styles.filterGroup}>
               <span className={styles.filterLabel}>Employee:</span>
-              <select
-                className={styles.filterSelect}
-                value={attFilter.employeeId}
-                onChange={(e) => setAttFilter({ ...attFilter, employeeId: e.target.value })}
-              >
-                <option value="">All Employees</option>
+              <input
+                list="att-employee-options"
+                className={styles.filterInput}
+                placeholder="All Employees"
+                value={attEmployeeName}
+                onChange={(e) => {
+                  setAttEmployeeName(e.target.value);
+                  const matched = employees.find(emp => emp.name.toLowerCase() === e.target.value.toLowerCase());
+                  setAttFilter({ ...attFilter, employeeId: matched ? matched._id : '' });
+                }}
+              />
+              <datalist id="att-employee-options">
                 {employees.map(emp => (
-                  <option key={emp._id} value={emp._id}>{emp.name}</option>
+                  <option key={emp._id} value={emp.name} />
                 ))}
-              </select>
+              </datalist>
             </div>
             <button className={`${styles.btn} ${styles.btnPrimary}`} style={{ padding: '8px 14px' }} onClick={loadReportData}>
               <FaSearch /> Search
             </button>
-            
+
             <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
               <button className={`${styles.btn} ${styles.btnSecondary}`} onClick={() => exportCSV(attendanceData, 'Attendance_Report')}>
                 CSV
@@ -236,16 +244,15 @@ function ReportsPage() {
                       <td className={styles.td}>{att.employee?.name}</td>
                       <td className={styles.td}>{new Date(att.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
                       <td className={styles.td}>
-                        {att.checkOut 
-                          ? new Date(att.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
-                          : <span className={styles.badge} style={{ backgroundColor: '#F3F4F6', color: '#9CA3AF' }}>Active</span>
+                        {att.checkOut
+                          ? new Date(att.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                          : <span className={`${styles.badge} ${styles.badgeSuccess}`}>ACTIVE</span>
                         }
                       </td>
                       <td className={styles.td} style={{ fontWeight: '500' }}>{att.totalHours || '0'} hrs</td>
                       <td className={styles.td}>
-                        <span className={`${styles.badge} ${
-                          att.status === 'Present' ? styles.badgeSuccess : att.status === 'Late' ? styles.badgeWarning : styles.badgeDanger
-                        }`}>
+                        <span className={`${styles.badge} ${att.status === 'Present' ? styles.badgeSuccess : att.status === 'Late' ? styles.badgeWarning : styles.badgeDanger
+                          }`}>
                           {att.status}
                         </span>
                       </td>
@@ -277,16 +284,22 @@ function ReportsPage() {
             </div>
             <div className={styles.filterGroup}>
               <span className={styles.filterLabel}>Assignee:</span>
-              <select
-                className={styles.filterSelect}
-                value={taskFilter.employeeId}
-                onChange={(e) => setTaskFilter({ ...taskFilter, employeeId: e.target.value })}
-              >
-                <option value="">All Assignees</option>
+              <input
+                list="task-assignee-options"
+                className={styles.filterInput}
+                placeholder="All Assignees"
+                value={taskAssigneeName}
+                onChange={(e) => {
+                  setTaskAssigneeName(e.target.value);
+                  const matched = employees.find(emp => emp.name.toLowerCase() === e.target.value.toLowerCase());
+                  setTaskFilter({ ...taskFilter, employeeId: matched ? matched._id : '' });
+                }}
+              />
+              <datalist id="task-assignee-options">
                 {employees.map(emp => (
-                  <option key={emp._id} value={emp._id}>{emp.name}</option>
+                  <option key={emp._id} value={emp.name} />
                 ))}
-              </select>
+              </datalist>
             </div>
             <div className={styles.filterGroup}>
               <span className={styles.filterLabel}>Status:</span>
@@ -305,7 +318,7 @@ function ReportsPage() {
             <button className={`${styles.btn} ${styles.btnPrimary}`} style={{ padding: '8px 14px' }} onClick={loadReportData}>
               <FaSearch /> Search
             </button>
-            
+
             <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
               <button className={`${styles.btn} ${styles.btnSecondary}`} onClick={() => exportCSV(tasksData, 'Tasks_Report')}>
                 CSV
@@ -340,9 +353,8 @@ function ReportsPage() {
                       <td className={styles.td}>{task.title}</td>
                       <td className={styles.td}>{task.assignedTo?.name}</td>
                       <td className={styles.td}>
-                        <span className={`${styles.badge} ${
-                          task.priority === 'High' ? styles.badgeDanger : task.priority === 'Medium' ? styles.badgeWarning : styles.badgeSuccess
-                        }`}>
+                        <span className={`${styles.badge} ${task.priority === 'High' ? styles.badgeDanger : task.priority === 'Medium' ? styles.badgeWarning : styles.badgeSuccess
+                          }`}>
                           {task.priority}
                         </span>
                       </td>
@@ -350,9 +362,8 @@ function ReportsPage() {
                         {task.deadline ? new Date(task.deadline).toLocaleDateString() : '-'}
                       </td>
                       <td className={styles.td}>
-                        <span className={`${styles.badge} ${
-                          task.status === 'Completed' ? styles.badgeSuccess : task.status === 'Blocked' ? styles.badgeDanger : styles.badgeWarning
-                        }`}>
+                        <span className={`${styles.badge} ${task.status === 'Completed' ? styles.badgeSuccess : task.status === 'Blocked' ? styles.badgeDanger : styles.badgeWarning
+                          }`}>
                           {task.status}
                         </span>
                       </td>
