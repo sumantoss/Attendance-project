@@ -31,21 +31,29 @@ app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Auth middleware
+const auth = require('./middleware/auth');
+const { adminOnly } = require('./middleware/auth');
+
 // Register API Routes
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/settings', require('./routes/settings'));
-app.use('/api/departments', require('./routes/departments'));
-app.use('/api/employees', require('./routes/employees'));
+
+// Shared routes — accessible by both admin and teamlead
+app.use('/api/projects', auth, require('./routes/projects'));
+app.use('/api/tasks', auth, require('./routes/tasks'));
+app.use('/api/blockers', auth, require('./routes/blockers'));
+app.use('/api/notifications', auth, require('./routes/notifications'));
+app.use('/api/departments', auth, require('./routes/departments'));
+app.use('/api/employees', auth, require('./routes/employees'));
+
+// Admin-only routes — protected with adminOnly middleware
+app.use('/api/settings', auth, adminOnly, require('./routes/settings'));
 app.use('/api/attendance', require('./routes/attendance'));
-app.use('/api/projects', require('./routes/projects'));
-app.use('/api/tasks', require('./routes/tasks'));
-app.use('/api/work-updates', require('./routes/workUpdates'));
-app.use('/api/blockers', require('./routes/blockers'));
-app.use('/api/performance', require('./routes/performance'));
-app.use('/api/dashboard', require('./routes/dashboard'));
-app.use('/api/reports', require('./routes/reports'));
-app.use('/api/notifications', require('./routes/notifications'));
-app.use('/api/audit-logs', require('./routes/auditLogs'));
+app.use('/api/work-updates', auth, adminOnly, require('./routes/workUpdates'));
+app.use('/api/performance', auth, adminOnly, require('./routes/performance'));
+app.use('/api/dashboard', auth, adminOnly, require('./routes/dashboard'));
+app.use('/api/reports', auth, adminOnly, require('./routes/reports'));
+app.use('/api/audit-logs', auth, adminOnly, require('./routes/auditLogs'));
 
 // Catch-all route for test purposes
 app.get('/', (req, res) => {

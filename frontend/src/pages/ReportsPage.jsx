@@ -419,8 +419,13 @@ function ReportsPage() {
                       <td className={styles.td}>{proj.completedTasks}</td>
                       <td className={styles.td}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <div style={{ flex: '1', backgroundColor: '#E2E8F0', height: '6px', width: '80px', borderRadius: '4px', overflow: 'hidden' }}>
-                            <div style={{ backgroundColor: 'var(--color-success)', height: '100%', width: `${proj.completionRate}%` }} />
+                          <div style={{ flex: '1', backgroundColor: 'var(--border-light)', height: '6px', width: '80px', borderRadius: '4px', overflow: 'hidden' }}>
+                            <div style={{ 
+                              backgroundColor: proj.completionRate > 60 ? 'var(--color-primary)' : proj.completionRate > 30 ? 'var(--color-warning)' : 'var(--color-error)', 
+                              height: '100%', 
+                              width: `${proj.completionRate}%`,
+                              transition: 'width 0.3s ease, background-color 0.3s ease'
+                            }} />
                           </div>
                           <span style={{ fontWeight: '600', fontSize: '0.8rem' }}>{proj.completionRate}%</span>
                         </div>

@@ -3,14 +3,32 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const Task = require('../models/Task');
 const AuditLog = require('../models/AuditLog');
+const Employee = require('../models/Employee');
 
 // Get all tasks
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
     const filter = {};
-    if (req.query.assignedTo) {
+    
+    // For team leads, only show tasks assigned to their department members
+    if (req.user && req.user.role === 'teamlead') {
+      const deptEmployees = await Employee.find({ department: req.user.department }).select('_id');
+      const employeeIds = deptEmployees.map(e => e._id);
+      
+      if (req.query.assignedTo) {
+        // If query has assignedTo, ensure it's within their department
+        if (employeeIds.some(id => id.toString() === req.query.assignedTo)) {
+          filter.assignedTo = req.query.assignedTo;
+        } else {
+          return res.json([]); // Requested employee not in their dept
+        }
+      } else {
+        filter.assignedTo = { $in: employeeIds };
+      }
+    } else if (req.query.assignedTo) {
       filter.assignedTo = req.query.assignedTo;
     }
+
     const tasks = await Task.find(filter).populate('project').populate('assignedTo').sort({ createdAt: -1 });
     res.json(tasks);
   } catch (err) {

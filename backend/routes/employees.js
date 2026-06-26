@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
+const { adminOnly } = require('../middleware/auth');
 const Employee = require('../models/Employee');
+const Admin = require('../models/Admin');
+const bcrypt = require('bcryptjs');
 const AuditLog = require('../models/AuditLog');
 const Attendance = require('../models/Attendance');
 const Task = require('../models/Task');
@@ -13,9 +16,14 @@ const path = require('path');
 const fs = require('fs');
 
 // Get all employees
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
-    const employees = await Employee.find().populate('department').sort({ name: 1 });
+    const filter = {};
+    if (req.user && req.user.role === 'teamlead') {
+      if (!req.user.department) return res.json([]);
+      filter.department = req.user.department;
+    }
+    const employees = await Employee.find(filter).populate('department').sort({ name: 1 });
     res.json(employees);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -91,7 +99,7 @@ router.get('/profile/:id', auth, async (req, res) => {
     const tasksInProgress = tasks.filter(t => t.status === 'In Progress').length;
     const tasksBlocked = tasks.filter(t => t.status === 'Blocked').length;
     const tasksOverdue = tasks.filter(t =>
-      t.status !== 'Completed' && t.deadline && new Date(t.deadline) < now
+      t.status !== 'Completed' && t.status !== 'Blocked' && t.deadline && new Date(t.deadline) < now
     ).length;
 
     // --- Recent work updates (last 10) ---
@@ -149,15 +157,27 @@ router.get('/profile/:id', auth, async (req, res) => {
 });
 
 // Create employee
-router.post('/', auth, async (req, res) => {
-  const { employeeId, name, department, role, joiningDate, pin, status, email, phone, reportingManager } = req.body;
+router.post('/', auth, adminOnly, async (req, res) => {
+  const { employeeId, name, department, role, joiningDate, pin, status, email, phone, reportingManager, portalPassword } = req.body;
   if (!employeeId || !name || !department || !role || !joiningDate || !pin) {
     return res.status(400).json({ message: 'Missing required fields' });
+  }
+
+  // If role is a Lead role and they provided a password, require email
+  const isLead = role.toLowerCase().includes('lead');
+  if (isLead && portalPassword && !email) {
+    return res.status(400).json({ message: 'Email is required to create a Team Lead portal account' });
   }
 
   try {
     const existing = await Employee.findOne({ employeeId });
     if (existing) return res.status(400).json({ message: 'Employee ID already exists' });
+
+    // Optionally check if Admin email already exists
+    if (isLead && portalPassword) {
+      const existingAdmin = await Admin.findOne({ email, role: 'teamlead' });
+      if (existingAdmin) return res.status(400).json({ message: 'A Team Lead portal account with this email already exists' });
+    }
 
     const employee = await Employee.create({
       employeeId,
@@ -172,6 +192,19 @@ router.post('/', auth, async (req, res) => {
       reportingManager: reportingManager || undefined
     });
 
+    // Create the Team Lead portal account if specified
+    if (isLead && portalPassword) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(portalPassword, salt);
+      await Admin.create({
+        fullName: name,
+        email: email,
+        password: hashedPassword,
+        role: 'teamlead',
+        department: department
+      });
+    }
+
     await AuditLog.create({
       action: 'EMPLOYEE_CREATE',
       user: 'HR Admin',
@@ -185,7 +218,7 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Update employee
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', auth, adminOnly, async (req, res) => {
   try {
     const employee = await Employee.findById(req.params.id);
     if (!employee) return res.status(404).json({ message: 'Employee not found' });
@@ -255,7 +288,7 @@ const upload = multer({
 });
 
 // Upload employee photo
-router.post('/:id/photo', auth, (req, res) => {
+router.post('/:id/photo', auth, adminOnly, (req, res) => {
   upload.single('photo')(req, res, async function (err) {
     if (err instanceof multer.MulterError) {
       return res.status(400).json({ message: `Upload error: ${err.message}` });

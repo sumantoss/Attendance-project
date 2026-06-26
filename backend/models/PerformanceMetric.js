@@ -11,6 +11,8 @@ const performanceMetricSchema = new mongoose.Schema({
   taskCompletionRate: { type: Number, default: 0 },
   overdueTasks: { type: Number, default: 0 },
   blockedTasks: { type: Number, default: 0 },
+  workUpdateCompliance: { type: Number, default: 0 },
+  onTimeDeliveryRate: { type: Number, default: 0 },
   individualScore: { type: Number, default: 0 }
 }, { timestamps: true });
 

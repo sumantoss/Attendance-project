@@ -20,7 +20,12 @@ const adminSchema = new mongoose.Schema({
   },
   role: {
     type: String,
+    enum: ['admin', 'teamlead'],
     default: 'admin'
+  },
+  department: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Department'
   },
   resetPasswordToken: String,
   resetPasswordExpire: Date

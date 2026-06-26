@@ -126,7 +126,7 @@ function EmployeesPage() {
     status: 'Active',
     email: '',
     phone: '',
-    reportingManager: ''
+    portalPassword: ''
   });
   const [error, setError] = useState('');
 
@@ -248,7 +248,7 @@ function EmployeesPage() {
       status: 'Active',
       email: '',
       phone: '',
-      reportingManager: ''
+      portalPassword: ''
     });
     setError('');
     setShowModal(true);
@@ -266,7 +266,7 @@ function EmployeesPage() {
       status: emp.status,
       email: emp.email || '',
       phone: emp.phone || '',
-      reportingManager: emp.reportingManager?._id || emp.reportingManager || ''
+      portalPassword: ''
     });
     setError('');
     setShowModal(true);
@@ -465,7 +465,6 @@ function EmployeesPage() {
                 <label className={styles.label}>Employee ID *</label>
                 <input
                   type="text"
-                  placeholder="e.g. EMP004"
                   className={styles.input}
                   value={formData.employeeId}
                   onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
@@ -478,7 +477,6 @@ function EmployeesPage() {
                 <label className={styles.label}>Full Name *</label>
                 <input
                   type="text"
-                  placeholder="John Doe"
                   className={styles.input}
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -507,7 +505,6 @@ function EmployeesPage() {
                 <label className={styles.label}>Role *</label>
                 <input
                   type="text"
-                  placeholder="e.g. Project Manager"
                   className={styles.input}
                   value={formData.role}
                   onChange={(e) => setFormData({ ...formData, role: e.target.value })}
@@ -518,13 +515,15 @@ function EmployeesPage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
               <div className={styles.formGroup}>
-                <label className={styles.label}>Email Address</label>
+                <label className={styles.label}>
+                  Email Address {formData.role.toLowerCase().includes('lead') && '*'}
+                </label>
                 <input
                   type="email"
-                  placeholder="e.g. email@company.com"
                   className={styles.input}
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  required={formData.role.toLowerCase().includes('lead')}
                 />
               </div>
 
@@ -532,7 +531,6 @@ function EmployeesPage() {
                 <label className={styles.label}>Phone Number</label>
                 <input
                   type="text"
-                  placeholder="e.g. 9876543210"
                   className={styles.input}
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -540,34 +538,30 @@ function EmployeesPage() {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+            {formData.role.toLowerCase().includes('lead') && !editingEmp && (
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Portal Password (for Team Lead login) *</label>
+                <input
+                  type="password"
+                  className={styles.input}
+                  value={formData.portalPassword}
+                  onChange={(e) => setFormData({ ...formData, portalPassword: e.target.value })}
+                  required={formData.role.toLowerCase().includes('lead')}
+                />
+              </div>
+            )}
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '15px' }}>
               <div className={styles.formGroup}>
                 <label className={styles.label}>4-Digit PIN *</label>
                 <input
                   type="text"
                   maxLength="4"
-                  placeholder="e.g. 5678"
                   className={styles.input}
                   value={formData.pin}
                   onChange={(e) => setFormData({ ...formData, pin: e.target.value.replace(/\D/g, '') })}
                   required
                 />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Reporting Manager</label>
-                <select
-                  className={styles.select}
-                  value={formData.reportingManager}
-                  onChange={(e) => setFormData({ ...formData, reportingManager: e.target.value })}
-                >
-                  <option value="">-- No Manager --</option>
-                  {employees
-                    .filter(emp => !editingEmp || emp._id !== editingEmp._id)
-                    .map(emp => (
-                      <option key={emp._id} value={emp._id}>{emp.name} ({emp.role})</option>
-                    ))}
-                </select>
               </div>
             </div>
 

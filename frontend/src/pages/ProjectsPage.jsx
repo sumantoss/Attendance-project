@@ -19,13 +19,17 @@ function ProjectsPage() {
     description: ''
   });
   
+  const [departments, setDepartments] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     status: 'Active',
-    teamMembers: []
+    teamMembers: [],
+    department: ''
   });
   const [error, setError] = useState('');
+  
+  const userRole = localStorage.getItem('swms_user_role');
 
   const fetchProjects = async () => {
     try {
@@ -45,10 +49,20 @@ function ProjectsPage() {
     }
   };
 
+  const fetchDepartments = async () => {
+    try {
+      const res = await api.get('/departments');
+      setDepartments(res.data);
+    } catch (err) {
+      console.error('Failed to fetch departments', err);
+    }
+  };
+
   useEffect(() => {
     Promise.resolve().then(() => {
       fetchProjects();
       fetchEmployees();
+      fetchDepartments();
     });
   }, []);
 
@@ -58,7 +72,8 @@ function ProjectsPage() {
       name: '',
       description: '',
       status: 'Active',
-      teamMembers: []
+      teamMembers: [],
+      department: ''
     });
     setError('');
     setShowModal(true);
@@ -70,7 +85,8 @@ function ProjectsPage() {
       name: proj.name,
       description: proj.description || '',
       status: proj.status,
-      teamMembers: proj.teamMembers?.map(m => m._id) || []
+      teamMembers: proj.teamMembers?.map(m => m._id) || [],
+      department: proj.department?._id || proj.department || ''
     });
     setError('');
     setShowModal(true);
@@ -292,6 +308,22 @@ function ProjectsPage() {
               </select>
             </div>
 
+            {userRole === 'admin' && (
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Department</label>
+                <select
+                  className={styles.select}
+                  value={formData.department}
+                  onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                >
+                  <option value="">No Department Assigned</option>
+                  {departments.map(dept => (
+                    <option key={dept._id} value={dept._id}>{dept.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             <div className={styles.formGroup}>
               <label className={styles.label}>Team Members Allocation</label>
               <div style={{
@@ -383,7 +415,9 @@ function ProjectsPage() {
                     
                     <select className={styles.select} value={taskFormData.assignedTo} onChange={e => setTaskFormData({...taskFormData, assignedTo: e.target.value})} required>
                       <option value="">-- Assign To --</option>
-                      {employees.map(emp => (
+                      {(viewingProj?.teamMembers || [])
+                        .filter(emp => employees.some(e => e._id === emp._id))
+                        .map(emp => (
                         <option key={emp._id} value={emp._id}>{emp.name} ({emp.role})</option>
                       ))}
                     </select>

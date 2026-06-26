@@ -10,7 +10,16 @@ const AuditLog = require('../models/AuditLog');
 // Get all blockers
 router.get('/', auth, async (req, res) => {
   try {
-    const blockers = await Blocker.find()
+    const filter = {};
+    
+    // For team leads, only show blockers for their department members
+    if (req.user && req.user.role === 'teamlead') {
+      const deptEmployees = await Employee.find({ department: req.user.department }).select('_id');
+      const employeeIds = deptEmployees.map(e => e._id);
+      filter.employee = { $in: employeeIds };
+    }
+
+    const blockers = await Blocker.find(filter)
       .populate({ path: 'task', populate: { path: 'project' } })
       .populate('employee')
       .populate('assignedReviewer')

@@ -433,39 +433,6 @@ function DashboardPage() {
 
       {/* Performance & EOD Updates */}
       <div className={styles.recentGrid}>
-        {/* Performance Snapshot */}
-        <div className={styles.recentCard}>
-          <h2 className={styles.recentTitle}>Performance Snapshot</h2>
-          <div className={styles.perfGrid}>
-            <div className={styles.perfSection}>
-              <span className={styles.perfLabel} style={{ color: '#4d8c58' }}>Top Performers</span>
-              {topPerformers.length === 0 ? (
-                <div className={styles.emptyState}>No data available.</div>
-              ) : (
-                topPerformers.map(p => (
-                  <div key={p._id} className={styles.perfItem}>
-                    <span className={styles.perfName}>{p.name}</span>
-                    <span className={styles.perfValue} style={{ background: '#f5faf2', color: '#4d8c58' }}>{p.taskCompletionRate}%</span>
-                  </div>
-                ))
-              )}
-            </div>
-            <div className={styles.perfSection}>
-              <span className={styles.perfLabel} style={{ color: '#d64545' }}>Needs Attention</span>
-              {needsAttention.length === 0 ? (
-                <div className={styles.emptyState}>No data available.</div>
-              ) : (
-                needsAttention.map(p => (
-                  <div key={p._id} className={styles.perfItem}>
-                    <span className={styles.perfName}>{p.name}</span>
-                    <span className={styles.perfValue} style={{ background: '#fee2e2', color: '#d64545' }}>{p.overdueTasks} overdue</span>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-
         {/* EOD Updates */}
         <div className={styles.recentCard}>
           <h2 className={styles.recentTitle}>

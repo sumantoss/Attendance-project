@@ -6,63 +6,64 @@ const Attendance = require('../models/Attendance');
 const Task = require('../models/Task');
 const Blocker = require('../models/Blocker');
 const PerformanceMetric = require('../models/PerformanceMetric');
+const DailyWorkUpdate = require('../models/DailyWorkUpdate');
 
-// Helpers for weekdays calculation
-function getWeekdaysInMonth(year, month) {
+// Helper to get weekdays between two dates
+function getWeekdaysBetweenDates(startDate, endDate) {
   let count = 0;
-  const daysInMonth = new Date(year, month, 0).getDate();
-  for (let day = 1; day <= daysInMonth; day++) {
-    const d = new Date(year, month - 1, day);
-    const dayOfWeek = d.getDay();
+  let curDate = new Date(startDate);
+  curDate.setHours(0, 0, 0, 0);
+  const end = new Date(endDate);
+  end.setHours(23, 59, 59, 999);
+
+  // If start date is after end date, return 1 to avoid division by zero
+  if (curDate > end) return 1;
+
+  while (curDate <= end) {
+    const dayOfWeek = curDate.getDay();
     if (dayOfWeek !== 0 && dayOfWeek !== 6) {
       count++;
     }
+    curDate.setDate(curDate.getDate() + 1);
   }
-  return count || 22;
+  return count || 1;
 }
 
-function getWeekdaysUpToToday(year, month) {
-  const today = new Date();
-  if (today.getFullYear() === year && (today.getMonth() + 1) === month) {
-    let count = 0;
-    const currentDay = today.getDate();
-    for (let day = 1; day <= currentDay; day++) {
-      const d = new Date(year, month - 1, day);
-      const dayOfWeek = d.getDay();
-      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-        count++;
-      }
-    }
-    return count || 1;
-  }
-  return getWeekdaysInMonth(year, month);
-}
-
-// Calculate and save monthly performance metrics for an employee
+// Calculate and save cumulative performance metrics for an employee up to the specified month
 async function calculatePerformance(employeeId, monthStr) {
   const [year, month] = monthStr.split('-').map(Number);
   const employee = await Employee.findById(employeeId);
   if (!employee) return null;
 
-  // 1. Attendance Metrics
-  const dateRegex = new RegExp(`^${monthStr}`);
-  const attendances = await Attendance.find({ employee: employeeId, date: { $regex: dateRegex } });
+  const endOfMonth = new Date(year, month, 0, 23, 59, 59, 999);
+  const today = new Date();
+  
+  // The cutoff date for cumulative calculation is either the end of the specified month, or today if we're in the current month
+  const isCurrentMonth = today.getFullYear() === year && (today.getMonth() + 1) === month;
+  const cutoffDate = isCurrentMonth ? today : endOfMonth;
+
+  // 1. Attendance Metrics (Cumulative up to cutoffDate)
+  const cutoffDateStr = cutoffDate.toISOString().split('T')[0];
+  const attendances = await Attendance.find({ 
+    employee: employeeId, 
+    date: { $lte: cutoffDateStr } 
+  });
   
   const presentDays = attendances.length;
-  const weekdays = getWeekdaysUpToToday(year, month);
+  
+  // Weekdays from joining date to cutoffDate
+  const startDate = employee.joiningDate ? new Date(employee.joiningDate) : new Date(year, month - 1, 1);
+  const weekdays = getWeekdaysBetweenDates(startDate, cutoffDate);
   const attendancePercentage = Math.min(100, Math.round((presentDays / weekdays) * 100));
 
   const totalHours = attendances.reduce((sum, att) => sum + (att.totalHours || 0), 0);
   const averageWorkingHours = presentDays > 0 ? parseFloat((totalHours / presentDays).toFixed(2)) : 0;
   const lateArrivalCount = attendances.filter(att => att.status === 'Late').length;
 
-  // 2. Task Metrics
-  const startOfMonth = new Date(year, month - 1, 1);
-  const endOfMonth = new Date(year, month, 0, 23, 59, 59, 999);
-
+  // 2. Task Metrics (Cumulative up to cutoffDate)
   const tasks = await Task.find({
     assignedTo: employeeId,
-    createdAt: { $gte: startOfMonth, $lte: endOfMonth }
+    createdAt: { $lte: endOfMonth } // Include all tasks created up to the end of the requested month
   });
 
   const tasksAssigned = tasks.length;
@@ -70,22 +71,32 @@ async function calculatePerformance(employeeId, monthStr) {
   const taskCompletionRate = tasksAssigned > 0 ? Math.round((tasksCompleted / tasksAssigned) * 100) : 0;
   
   const overdueTasks = tasks.filter(t => 
-    t.status !== 'Completed' && t.deadline && new Date(t.deadline) < new Date()
+    t.status !== 'Completed' && 
+    t.status !== 'Blocked' && // Blocked tasks are not considered overdue
+    t.deadline && 
+    new Date(t.deadline) < new Date()
   ).length;
 
   const blockedTasks = tasks.filter(t => t.status === 'Blocked').length;
 
-  // 3. Score Calculation
-  const attendanceRate = attendancePercentage; // weight: 30%
-  const avgHoursRate = Math.min(100, Math.round((averageWorkingHours / 8) * 100)); // weight: 10%
-  const completionRate = taskCompletionRate; // weight: 40%
-  const deliveryRate = tasksAssigned > 0 ? Math.round(((tasksAssigned - overdueTasks) / tasksAssigned) * 100) : 100; // weight: 20%
+  // 3. Work Update Compliance (Cumulative up to cutoffDate)
+  const workUpdatesCount = await DailyWorkUpdate.countDocuments({
+    employee: employeeId,
+    date: { $lte: cutoffDateStr }
+  });
+  // Compare work updates against present days
+  const workUpdateCompliance = presentDays > 0 ? Math.min(100, Math.round((workUpdatesCount / presentDays) * 100)) : 0;
+
+  // 4. Score Calculation
+  const attendanceRate = attendancePercentage;
+  const completionRate = taskCompletionRate;
+  const onTimeDeliveryRate = tasksAssigned > 0 ? Math.round(((tasksAssigned - overdueTasks) / tasksAssigned) * 100) : 100;
 
   const individualScore = Math.round(
-    attendanceRate * 0.3 + 
-    completionRate * 0.4 + 
-    deliveryRate * 0.2 + 
-    avgHoursRate * 0.1
+    (completionRate * 0.45) + 
+    (attendanceRate * 0.30) + 
+    (onTimeDeliveryRate * 0.20) + 
+    (workUpdateCompliance * 0.05)
   );
 
   // Save/Update PerformanceMetric
@@ -100,6 +111,8 @@ async function calculatePerformance(employeeId, monthStr) {
       taskCompletionRate,
       overdueTasks,
       blockedTasks,
+      workUpdateCompliance,
+      onTimeDeliveryRate,
       individualScore
     },
     { new: true, upsert: true }
